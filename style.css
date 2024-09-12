@@ -1,0 +1,70 @@
+*{
+    border: red solid 2px;
+}
+
+.fp-container{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background-color: #1F2937;
+    color: white;
+    font-family: Arial;
+    padding-left: 60px;
+    padding-right: 60px;
+}
+
+.fp-header{
+    display: flex;
+    flex: auto;
+    gap: 10px;
+    align-items: center;
+    padding: 30px;
+}
+
+.fp-head-child-logo{
+    margin-right: auto;
+    font-size: large;
+}
+
+.fp-head-child{
+    font-size: smaller;
+    font-weight: 100;
+}
+
+.fp-para{
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    gap: 10px;
+    /* background: cyan; */
+    max-height: 200px;
+    flex-wrap: wrap;
+}
+
+.fp-para-head{
+    font-size: xx-large;
+    width: 10em;
+}
+
+.fp-para-para{
+    width: 300px;
+    font-size: smaller;
+    font-weight: 100;
+    color: #E5E7EB;
+}
+
+.fp-para-button{
+    color: white;
+    background-color: #3882F6;
+    border: #1F2937;
+    padding: 4px;
+    border-radius: 5px;
+    width: 10em;
+}
+
+.fp-para-image{
+    flex: auto;
+    width: auto;
+    height: 100px;
+    margin-left: auto;
+}
