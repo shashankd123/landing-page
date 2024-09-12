@@ -1,5 +1,11 @@
 *{
     border: red solid 2px;
+    font-family: Arial;
+}
+
+.main-cont{
+    display: flex;
+    flex-direction: column;
 }
 
 .fp-container{
@@ -68,3 +74,46 @@
     height: 100px;
     margin-left: auto;
 }
+
+.sc-container{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background: white;
+    align-items: center;
+    margin: 10px;
+}
+
+.sc-img-dis-cont{
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+}
+
+.sc-header{
+    align-self: center;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.sc-img-dis{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+}
+
+.sc-img{
+    border: black solid 2px;
+    border-radius: 5px;
+}
+
+.sc-dis{
+    max-width: 100px;
+    font-size: small;
+    color: rgb(76, 76, 76);
+    text-align: center;
+    margin: 10px;
+}
+
