@@ -1,11 +1,14 @@
 *{
-    border: red solid 2px;
+    /* border: red solid 2px; */
     font-family: Arial;
+    /* background: #1F2937; */
 }
 
 .main-cont{
     display: flex;
     flex-direction: column;
+    /* background: #1F2937; */
+    /* border: #1F2937 solid 10px; */
 }
 
 .fp-container{
@@ -117,3 +120,34 @@
     margin: 10px;
 }
 
+.tr-container{
+    background: #E5E7EB;
+}
+
+.tr-container{
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+}
+
+.tr-container-q-c{
+    display: flex;
+    flex-direction: column;
+}
+
+.tr-quote{
+    width: 500px;
+    font-size: larger;
+    font-weight: 100;
+    font-style: italic;
+    color: #1F2937;
+}
+
+.tr-credit{
+    align-self: flex-end;
+    font-weight: bold;
+    color: #1F2937;
+    font-size: small;
+}
