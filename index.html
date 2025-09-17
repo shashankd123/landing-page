@@ -16,7 +16,8 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            /* Set height dynamically to handle mobile browser UI */
+        }
+        #app-container {
             height: var(--app-height, 100vh);
         }
         /* Custom scrollbar for a better aesthetic in the textarea */
@@ -37,8 +38,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex flex-col overflow-hidden">
+<body class="bg-gray-900 text-gray-200">
 
+<div id="app-container" class="flex flex-col overflow-hidden">
     <!-- Header Section -->
     <header class="text-center p-4 border-b border-gray-800">
         <h1 class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">
@@ -62,7 +64,7 @@
             <button id="next-day-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-5 rounded-lg transition-colors">Next &gt;</button>
         </div>
     </footer>
-
+</div>
     <!-- Modal for JSON Input -->
     <div id="json-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-lg w-full max-w-lg relative transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
@@ -281,5 +283,6 @@
     </script>
 </body>
 </html>
+
 
 
