@@ -17,9 +17,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        #app-container {
-            height: var(--app-height, 100vh);
-        }
         /* Custom scrollbar for a better aesthetic in the textarea */
         textarea::-webkit-scrollbar { width: 8px; }
         textarea::-webkit-scrollbar-track { background: #1f2937; }
@@ -80,12 +77,24 @@
 
 
     <script>
-        // --- Dynamic Viewport Height for Mobile ---
+        // --- More Robust Dynamic Viewport Height for Mobile ---
+        const appContainer = document.getElementById('app-container');
+        
         const setAppHeight = () => {
-            document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+            if (!appContainer) return;
+            // Set the height of our container directly to the window's inner height.
+            // This is the most reliable way to get the true visible viewport height on mobile.
+            appContainer.style.height = `${window.innerHeight}px`;
         };
+
+        // We run this on multiple events to catch all cases where the viewport might change.
+        document.addEventListener('DOMContentLoaded', setAppHeight);
         window.addEventListener('resize', setAppHeight);
-        setAppHeight(); // Set initial height
+        window.addEventListener('orientationchange', setAppHeight);
+        
+        // Run it one more time shortly after load for good measure
+        setTimeout(setAppHeight, 100);
+
 
         // DOM element references
         const jsonInput = document.getElementById('json-input');
@@ -283,6 +292,7 @@
     </script>
 </body>
 </html>
+
 
 
 
