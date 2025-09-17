@@ -16,6 +16,8 @@
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            /* Set height dynamically to handle mobile browser UI */
+            height: var(--app-height, 100vh);
         }
         /* Custom scrollbar for a better aesthetic in the textarea */
         textarea::-webkit-scrollbar { width: 8px; }
@@ -35,7 +37,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex flex-col h-screen overflow-hidden">
+<body class="bg-gray-900 text-gray-200 flex flex-col overflow-hidden">
 
     <!-- Header Section -->
     <header class="text-center p-4 border-b border-gray-800">
@@ -76,6 +78,13 @@
 
 
     <script>
+        // --- Dynamic Viewport Height for Mobile ---
+        const setAppHeight = () => {
+            document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+        };
+        window.addEventListener('resize', setAppHeight);
+        setAppHeight(); // Set initial height
+
         // DOM element references
         const jsonInput = document.getElementById('json-input');
         const loadWorkoutBtn = document.getElementById('load-workout-btn');
@@ -272,3 +281,5 @@
     </script>
 </body>
 </html>
+
+
