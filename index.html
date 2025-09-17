@@ -276,18 +276,6 @@
             }, 300);
         }
         
-        // --- Swipe Logic ---
-        let touchstartX = 0;
-        let touchendX = 0;
-            
-        function handleGesture() {
-            if (touchendX < touchstartX - 50) showNextDay(); // Swiped left
-            if (touchendX > touchstartX + 50) showPrevDay(); // Swiped right
-        }
-
-        slider.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX });
-        slider.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleGesture(); });
-
         // --- INITIALIZATION ---
         editPlanBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
@@ -305,4 +293,5 @@
     </script>
 </body>
 </html>
+
 
