@@ -118,6 +118,17 @@
         // Default workout plan
         const defaultWorkoutJSON = { "Monday": { "workout": "Push Day", "exercises": [ { "name": "Bench Press", "sets": 4, "reps": "8-12" }, { "name": "Overhead Press", "sets": 3, "reps": "10-15" }, { "name": "Incline Dumbbell Press", "sets": 3, "reps": "10-15" }, { "name": "Tricep Pushdowns", "sets": 3, "reps": "12-15" }, { "name": "Lateral Raises", "sets": 4, "reps": "15-20" } ] }, "Tuesday": { "workout": "Pull Day", "exercises": [ { "name": "Pull-Ups", "sets": 4, "reps": "AMRAP" }, { "name": "Barbell Rows", "sets": 3, "reps": "8-12" }, { "name": "Face Pulls", "sets": 3, "reps": "15-20" }, { "name": "Bicep Curls", "sets": 3, "reps": "12-15" } ] }, "Wednesday": { "workout": "Rest Day", "exercises": [ { "name": "Light Cardio", "sets": 1, "reps": "30 min" }, { "name": "Stretching", "sets": 1, "reps": "15 min" } ] }, "Thursday": { "workout": "Leg Day", "exercises": [ { "name": "Squats", "sets": 4, "reps": "8-12" }, { "name": "Romanian Deadlifts", "sets": 3, "reps": "10-15" }, { "name": "Leg Press", "sets": 3, "reps": "12-15" }, { "name": "Leg Curls", "sets": 3, "reps": "12-15" }, { "name": "Calf Raises", "sets": 4, "reps": "15-20" } ] }, "Friday": { "workout": "Full Body", "exercises": [ { "name": "Deadlifts", "sets": 3, "reps": "5-8" }, { "name": "Dumbbell Bench Press", "sets": 3, "reps": "10-12" }, { "name": "Lat Pulldowns", "sets": 3, "reps": "10-15" }, { "name": "Leg Extensions", "sets": 3, "reps": "15-20" } ] }, "Saturday": { "workout": "Active Recovery", "exercises": [ { "name": "Jogging or Cycling", "sets": 1, "reps": "45 min" } ] }, "Sunday": { "workout": "Rest Day", "exercises": [ { "name": "Full Rest", "sets": 0, "reps": "All day" } ] } };
 
+        function loadPlan() {
+            const savedPlan = localStorage.getItem('workoutPlan');
+            // If a plan is saved, use it. Otherwise, use the default.
+            jsonInput.value = savedPlan ? savedPlan : JSON.stringify(defaultWorkoutJSON, null, 4);
+        }
+
+        function savePlan() {
+            // Save the current content of the input to localStorage
+            localStorage.setItem('workoutPlan', jsonInput.value);
+        }
+
         function getTodayDateString() {
             const today = new Date();
             // Format as YYYY-MM-DD
@@ -157,6 +168,8 @@
             let workoutData;
             try {
                 workoutData = JSON.parse(jsonInput.value);
+                // If JSON is valid, save the plan
+                savePlan();
             } catch (error) {
                 errorMessageContainer.textContent = 'Invalid JSON format.';
                 return;
@@ -285,14 +298,11 @@
         
         // Initial setup
         loadProgress();
-        jsonInput.value = JSON.stringify(defaultWorkoutJSON, null, 4);
+        loadPlan(); // Load saved plan on startup
         const today = new Date().getDay(); // Sunday = 0, Monday = 1, etc.
         currentDayIndex = (today === 0) ? 6 : today - 1; // Adjust to match our weekOrder array
         renderWorkoutPlan();
     </script>
 </body>
 </html>
-
-
-
 
