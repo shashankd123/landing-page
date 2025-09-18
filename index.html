@@ -33,6 +33,19 @@
         .exercise-done span:last-child {
             color: #4b5563;
         }
+        /* Spinner for loading state */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #34d399; /* emerald-400 */
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
@@ -64,13 +77,105 @@
 </div>
     <!-- Modal for JSON Input -->
     <div id="json-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-lg w-full max-w-lg relative transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
-            <h2 class="text-2xl font-bold mb-4 text-white">Your Workout JSON</h2>
-            <textarea id="json-input" class="w-full h-80 bg-gray-900 border border-gray-700 rounded-lg p-4 text-gray-300 text-sm font-mono focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 resize-none" spellcheck="false"></textarea>
-            <div id="error-message" class="mt-2 text-red-400 text-sm font-medium min-h-[20px]"></div>
+        <div class="bg-gray-800 border border-gray-700 p-6 rounded-2xl shadow-lg w-full max-w-4xl relative transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- AI Generation Form -->
+                <div class="w-full md:w-1/2">
+                    <h3 class="text-xl font-bold mb-4 text-white flex items-center gap-2">✨ Generate with AI</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Column 1 -->
+                        <div class="space-y-4">
+                            <div>
+                                <label for="goal" class="block text-sm font-medium text-gray-300">Primary Goal</label>
+                                <select id="goal" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                    <option>Muscle Gain</option>
+                                    <option>Fat Loss</option>
+                                    <option>General Fitness</option>
+                                    <option>Strength Training</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="level" class="block text-sm font-medium text-gray-300">Experience Level</label>
+                                <select id="level" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                    <option>Beginner</option>
+                                    <option>Intermediate</option>
+                                    <option>Advanced</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="gender" class="block text-sm font-medium text-gray-300">Gender</label>
+                                <select id="gender" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Prefer not to say</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="age" class="block text-sm font-medium text-gray-300">Age</label>
+                                <input type="number" id="age" value="25" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                            </div>
+                             <div>
+                                <label for="weight" class="block text-sm font-medium text-gray-300">Weight (kg)</label>
+                                <input type="number" id="weight" value="70" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                            </div>
+                        </div>
+                        <!-- Column 2 -->
+                        <div class="space-y-4">
+                           
+                            <div>
+                                <label for="height" class="block text-sm font-medium text-gray-300">Height (cm)</label>
+                                <input type="number" id="height" value="175" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="workout_type" class="block text-sm font-medium text-gray-300">Workout Style</label>
+                                <select id="workout_type" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                    <option>Bodybuilding</option>
+                                    <option>Powerlifting</option>
+                                    <option>CrossFit</option>
+                                    <option>General Hypertrophy</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="equipment" class="block text-sm font-medium text-gray-300">Equipment Access</label>
+                                <select id="equipment" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                                    <option>Full Gym</option>
+                                    <option>Dumbbells Only</option>
+                                    <option>Bodyweight Only</option>
+                                    <option>Basic Home Gym</option>
+                                </select>
+                            </div>
+                             <div>
+                                <label for="days" class="block text-sm font-medium text-gray-300">Days per Week</label>
+                                <input type="number" id="days" value="4" min="1" max="7" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                            </div>
+                             <div>
+                                <label for="time_available" class="block text-sm font-medium text-gray-300">Time per session (mins)</label>
+                                <input type="number" id="time_available" value="60" min="15" max="180" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                            </div>
+                        </div>
+                        <!-- Spanning full-width -->
+                        <div class="sm:col-span-2">
+                             <label for="requests" class="block text-sm font-medium text-gray-300">Special Requests</label>
+                            <input type="text" id="requests" placeholder="e.g., focus on legs, no jumping" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm">
+                        </div>
+                         <div class="sm:col-span-2">
+                            <button id="ai-generate-btn" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 hover:opacity-90 text-white font-bold py-2.5 px-4 rounded-lg transition-opacity flex items-center justify-center gap-2">
+                                 <span id="ai-btn-text">Generate Plan</span>
+                                 <div id="ai-spinner" class="spinner hidden"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Manual JSON Editor -->
+                <div class="w-full md:w-1/2 flex flex-col">
+                    <h3 class="text-xl font-bold mb-4 text-white">Edit Plan Manually</h3>
+                    <textarea id="json-input" class="w-full flex-grow bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-300 text-xs font-mono focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition duration-200 resize-none" spellcheck="false"></textarea>
+                </div>
+            </div>
+            <div id="error-message" class="mt-4 text-red-400 text-sm font-medium min-h-[20px]"></div>
             <div class="flex justify-end gap-4 mt-4">
                 <button id="close-modal-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Cancel</button>
-                <button id="load-workout-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Generate Plan</button>
+                <button id="load-workout-btn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">Save & Use Plan</button>
             </div>
         </div>
     </div>
@@ -82,21 +187,15 @@
         
         const setAppHeight = () => {
             if (!appContainer) return;
-            // Set the height of our container directly to the window's inner height.
-            // This is the most reliable way to get the true visible viewport height on mobile.
             appContainer.style.height = `${window.innerHeight}px`;
         };
 
-        // We run this on multiple events to catch all cases where the viewport might change.
         document.addEventListener('DOMContentLoaded', setAppHeight);
         window.addEventListener('resize', setAppHeight);
         window.addEventListener('orientationchange', setAppHeight);
-        
-        // Run it one more time shortly after load for good measure
         setTimeout(setAppHeight, 100);
 
-
-        // DOM element references
+        // --- DOM element references ---
         const jsonInput = document.getElementById('json-input');
         const loadWorkoutBtn = document.getElementById('load-workout-btn');
         const errorMessageContainer = document.getElementById('error-message');
@@ -111,40 +210,37 @@
         const editPlanBtn = document.getElementById('edit-plan-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');
         
+        // AI Generator elements
+        const aiGenerateBtn = document.getElementById('ai-generate-btn');
+        const aiBtnText = document.getElementById('ai-btn-text');
+        const aiSpinner = document.getElementById('ai-spinner');
+
+        // --- App State ---
         let currentDayIndex = 0;
         const weekOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
         let workoutProgress = {};
-        
-        // Default workout plan
-        const defaultWorkoutJSON = { "Monday": { "workout": "Push Day", "exercises": [ { "name": "Bench Press", "sets": 4, "reps": "8-12" }, { "name": "Overhead Press", "sets": 3, "reps": "10-15" }, { "name": "Incline Dumbbell Press", "sets": 3, "reps": "10-15" }, { "name": "Tricep Pushdowns", "sets": 3, "reps": "12-15" }, { "name": "Lateral Raises", "sets": 4, "reps": "15-20" } ] }, "Tuesday": { "workout": "Pull Day", "exercises": [ { "name": "Pull-Ups", "sets": 4, "reps": "AMRAP" }, { "name": "Barbell Rows", "sets": 3, "reps": "8-12" }, { "name": "Face Pulls", "sets": 3, "reps": "15-20" }, { "name": "Bicep Curls", "sets": 3, "reps": "12-15" } ] }, "Wednesday": { "workout": "Rest Day", "exercises": [ { "name": "Light Cardio", "sets": 1, "reps": "30 min" }, { "name": "Stretching", "sets": 1, "reps": "15 min" } ] }, "Thursday": { "workout": "Leg Day", "exercises": [ { "name": "Squats", "sets": 4, "reps": "8-12" }, { "name": "Romanian Deadlifts", "sets": 3, "reps": "10-15" }, { "name": "Leg Press", "sets": 3, "reps": "12-15" }, { "name": "Leg Curls", "sets": 3, "reps": "12-15" }, { "name": "Calf Raises", "sets": 4, "reps": "15-20" } ] }, "Friday": { "workout": "Full Body", "exercises": [ { "name": "Deadlifts", "sets": 3, "reps": "5-8" }, { "name": "Dumbbell Bench Press", "sets": 3, "reps": "10-12" }, { "name": "Lat Pulldowns", "sets": 3, "reps": "10-15" }, { "name": "Leg Extensions", "sets": 3, "reps": "15-20" } ] }, "Saturday": { "workout": "Active Recovery", "exercises": [ { "name": "Jogging or Cycling", "sets": 1, "reps": "45 min" } ] }, "Sunday": { "workout": "Rest Day", "exercises": [ { "name": "Full Rest", "sets": 0, "reps": "All day" } ] } };
+        const defaultWorkoutJSON = { "Monday": { "workout": "Push Day", "exercises": [ { "name": "Bench Press", "sets": 4, "reps": "8-12" }, { "name": "Overhead Press", "sets": 3, "reps": "10-15" }, { "name": "Incline Dumbbell Press", "sets": 3, "reps": "10-15" } ] }, "Tuesday": { "workout": "Pull Day", "exercises": [ { "name": "Pull-Ups", "sets": 4, "reps": "AMRAP" }, { "name": "Barbell Rows", "sets": 3, "reps": "8-12" } ] }, "Wednesday": { "workout": "Rest Day", "exercises": [] }, "Thursday": { "workout": "Leg Day", "exercises": [ { "name": "Squats", "sets": 4, "reps": "8-12" }, { "name": "Romanian Deadlifts", "sets": 3, "reps": "10-15" } ] }, "Friday": { "workout": "Full Body", "exercises": [ { "name": "Deadlifts", "sets": 3, "reps": "5-8" }, { "name": "Dumbbell Bench Press", "sets": 3, "reps": "10-12" } ] }, "Saturday": { "workout": "Rest Day", "exercises": [] }, "Sunday": { "workout": "Rest Day", "exercises": [] } };
 
+        // --- Data Persistence ---
         function loadPlan() {
             const savedPlan = localStorage.getItem('workoutPlan');
-            // If a plan is saved, use it. Otherwise, use the default.
             jsonInput.value = savedPlan ? savedPlan : JSON.stringify(defaultWorkoutJSON, null, 4);
         }
-
         function savePlan() {
-            // Save the current content of the input to localStorage
             localStorage.setItem('workoutPlan', jsonInput.value);
         }
-
         function getTodayDateString() {
             const today = new Date();
-            // Format as YYYY-MM-DD
             return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         }
-        
         function loadProgress() {
             const todayStr = getTodayDateString();
             const savedProgress = localStorage.getItem('workoutProgress');
             if(savedProgress) {
                 const parsed = JSON.parse(savedProgress);
-                // Only load progress if it's for the current day
                 if(parsed.date === todayStr) {
                     workoutProgress = parsed.progress || {};
                 } else {
-                    // It's a new day, clear old progress
                     localStorage.removeItem('workoutProgress');
                     workoutProgress = {};
                 }
@@ -152,48 +248,160 @@
                  workoutProgress = {};
             }
         }
-        
         function saveProgress() {
             const todayStr = getTodayDateString();
-            const dataToSave = {
-                date: todayStr,
-                progress: workoutProgress
-            };
+            const dataToSave = { date: todayStr, progress: workoutProgress };
             localStorage.setItem('workoutProgress', JSON.stringify(dataToSave));
         }
 
+        // --- Gemini API Integration ---
+        async function generateAiPlan() {
+            errorMessageContainer.textContent = '';
+            aiBtnText.textContent = 'Generating...';
+            aiSpinner.classList.remove('hidden');
+            aiGenerateBtn.disabled = true;
+
+            const goal = document.getElementById('goal').value;
+            const level = document.getElementById('level').value;
+            const days = document.getElementById('days').value;
+            const requests = document.getElementById('requests').value || 'None';
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const height = document.getElementById('height').value;
+            const weight = document.getElementById('weight').value;
+            const workoutType = document.getElementById('workout_type').value;
+            const equipment = document.getElementById('equipment').value;
+            const timeAvailable = document.getElementById('time_available').value;
+
+
+            const userPrompt = `You are an expert fitness coach. Create a highly detailed and personalized 7-day workout plan for a user with the following details:
+- Goal: ${goal}
+- Experience Level: ${level}
+- Gender: ${gender}
+- Age: ${age}
+- Weight: ${weight} kg
+- Height: ${height} cm
+- Preferred Workout Style: ${workoutType}
+- Equipment Access: ${equipment}
+- Training Days per Week: ${days}
+- Time Available per Session: ${timeAvailable} minutes
+- Special Requests: ${requests}
+
+Provide a workout for each of the 7 days of the week (Monday to Sunday). A training day should have a clear title (e.g., "Push Day", "Full Body Strength") and a list of exercises appropriate for the user's profile. For rest days, title it "Rest Day" and provide an empty list of exercises.
+The response must be a valid JSON object, following the provided schema. Do not include any text or markdown formatting before or after the JSON object.`;
+            
+            const exerciseSchema = {
+                type: "OBJECT",
+                properties: {
+                    name: { type: "STRING" },
+                    sets: { type: "NUMBER" },
+                    reps: { type: "STRING" },
+                },
+                required: ["name", "sets", "reps"],
+            };
+
+            const daySchema = {
+                type: "OBJECT",
+                properties: {
+                    workout: { type: "STRING" },
+                    exercises: { type: "ARRAY", items: exerciseSchema },
+                },
+                required: ["workout", "exercises"],
+            };
+
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    Monday: daySchema,
+                    Tuesday: daySchema,
+                    Wednesday: daySchema,
+                    Thursday: daySchema,
+                    Friday: daySchema,
+                    Saturday: daySchema,
+                    Sunday: daySchema,
+                },
+            };
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema,
+                },
+            };
+            
+            const apiKey = ""; // Canvas will provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+            try {
+                 const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates[0].content.parts[0].text) {
+                    const jsonText = result.candidates[0].content.parts[0].text;
+                    const parsedJson = JSON.parse(jsonText);
+                    jsonInput.value = JSON.stringify(parsedJson, null, 4);
+                } else {
+                    throw new Error("Received an invalid response from the AI.");
+                }
+
+            } catch (error) {
+                console.error("Error generating AI plan:", error);
+                errorMessageContainer.textContent = `Failed to generate plan. ${error.message}`;
+            } finally {
+                aiBtnText.textContent = 'Generate Plan';
+                aiSpinner.classList.add('hidden');
+                aiGenerateBtn.disabled = false;
+            }
+        }
+
+
+        // --- UI Rendering & Logic ---
         function renderWorkoutPlan() {
             slider.innerHTML = '';
             errorMessageContainer.textContent = '';
             let workoutData;
             try {
                 workoutData = JSON.parse(jsonInput.value);
-                // If JSON is valid, save the plan
                 savePlan();
             } catch (error) {
-                errorMessageContainer.textContent = 'Invalid JSON format.';
-                return;
+                errorMessageContainer.textContent = 'Invalid JSON format in the editor.';
+                // Load the default plan as a fallback to prevent app from breaking
+                workoutData = defaultWorkoutJSON;
             }
 
-            weekOrder.forEach((day, dayIndex) => {
+            weekOrder.forEach((day) => {
                 const dayData = workoutData[day];
                 const dayContainer = document.createElement('div');
                 dayContainer.className = "w-full h-full flex-shrink-0 p-4 sm:p-6 overflow-y-auto";
 
                 if (dayData && dayData.exercises) {
-                    const isRestDay = dayData.workout.toLowerCase().includes('rest');
+                    const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
                     const tagColor = isRestDay ? 'bg-blue-900 text-blue-300' : 'bg-emerald-900 text-emerald-300';
                     
                     let exercisesHtml = '<ul class="space-y-4 text-gray-300 flex-grow">';
-                    dayData.exercises.forEach((ex, exIndex) => {
-                        const isDone = workoutProgress[day] && workoutProgress[day][exIndex];
-                        exercisesHtml += `
-                            <li class="exercise-item flex justify-between items-center text-base p-4 bg-gray-800/60 border border-gray-700 rounded-lg cursor-pointer transition-all ${isDone ? 'exercise-done' : ''}" data-day="${day}" data-ex-index="${exIndex}">
-                                <span class="flex-1 pr-2 font-medium">${ex.name}</span>
-                                <span class="font-semibold text-gray-400 whitespace-nowrap">${ex.sets} x ${ex.reps}</span>
-                            </li>
-                        `;
-                    });
+                    if (dayData.exercises.length > 0) {
+                        dayData.exercises.forEach((ex, exIndex) => {
+                            const isDone = workoutProgress[day] && workoutProgress[day][exIndex];
+                            exercisesHtml += `
+                                <li class="exercise-item flex justify-between items-center text-base p-4 bg-gray-800/60 border border-gray-700 rounded-lg cursor-pointer transition-all ${isDone ? 'exercise-done' : ''}" data-day="${day}" data-ex-index="${exIndex}">
+                                    <span class="flex-1 pr-2 font-medium">${ex.name}</span>
+                                    <span class="font-semibold text-gray-400 whitespace-nowrap">${ex.sets} x ${ex.reps}</span>
+                                </li>
+                            `;
+                        });
+                    } else {
+                        exercisesHtml += `<li class="text-center text-gray-400 p-4">Enjoy your rest!</li>`;
+                    }
                     exercisesHtml += '</ul>';
 
                     dayContainer.innerHTML = `
@@ -223,12 +431,7 @@
                     const day = target.dataset.day;
                     const exIndex = parseInt(target.dataset.exIndex);
                     
-                    // Initialize progress for the day if it doesn't exist
-                    if(!workoutProgress[day]) {
-                        workoutProgress[day] = [];
-                    }
-                    
-                    // Toggle progress
+                    if(!workoutProgress[day]) workoutProgress[day] = [];
                     workoutProgress[day][exIndex] = !workoutProgress[day][exIndex];
                     
                     target.classList.toggle('exercise-done');
@@ -240,7 +443,6 @@
         function updateSlider() {
             slider.style.transform = `translateX(-${currentDayIndex * 100}%)`;
             dayIndicator.textContent = weekOrder[currentDayIndex];
-            // Disable/enable buttons at the start/end
             prevBtn.disabled = currentDayIndex === 0;
             nextBtn.disabled = currentDayIndex === weekOrder.length - 1;
             prevBtn.classList.toggle('opacity-50', currentDayIndex === 0);
@@ -264,34 +466,28 @@
         // --- Modal Logic ---
         function openModal() {
             modal.classList.remove('hidden');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-            }, 10);
+            setTimeout(() => modalContent.classList.remove('scale-95', 'opacity-0'), 10);
         }
-
         function closeModal() {
             modalContent.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
         
         // --- INITIALIZATION ---
         editPlanBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); }); // Close on overlay click
+        modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
         loadWorkoutBtn.addEventListener('click', renderWorkoutPlan);
         prevBtn.addEventListener('click', showPrevDay);
         nextBtn.addEventListener('click', showNextDay);
+        aiGenerateBtn.addEventListener('click', generateAiPlan);
         
-        // Initial setup
         loadProgress();
-        loadPlan(); // Load saved plan on startup
+        loadPlan();
         const today = new Date().getDay(); // Sunday = 0, Monday = 1, etc.
-        currentDayIndex = (today === 0) ? 6 : today - 1; // Adjust to match our weekOrder array
+        currentDayIndex = (today === 0) ? 6 : today - 1;
         renderWorkoutPlan();
     </script>
 </body>
 </html>
-
 
