@@ -30,7 +30,8 @@
             text-decoration: line-through;
             color: #4b5563; /* Muted gray color */
         }
-        .exercise-done span:last-child {
+        .exercise-done .exercise-name,
+        .exercise-done .exercise-details {
             color: #4b5563;
         }
     </style>
@@ -187,10 +188,22 @@
                     let exercisesHtml = '<ul class="space-y-4 text-gray-300 flex-grow">';
                     dayData.exercises.forEach((ex, exIndex) => {
                         const isDone = workoutProgress[day] && workoutProgress[day][exIndex];
+                        // NEW: Create a URL-friendly search query for the exercise name
+                        const searchQuery = encodeURIComponent(ex.name);
+                        const searchUrl = `https://www.google.com/search?tbm=isch&q=${searchQuery}`;
+
                         exercisesHtml += `
                             <li class="exercise-item flex justify-between items-center text-base p-4 bg-gray-800/60 border border-gray-700 rounded-lg cursor-pointer transition-all ${isDone ? 'exercise-done' : ''}" data-day="${day}" data-ex-index="${exIndex}">
-                                <span class="flex-1 pr-2 font-medium">${ex.name}</span>
-                                <span class="font-semibold text-gray-400 whitespace-nowrap">${ex.sets} x ${ex.reps}</span>
+                                <span class="flex-1 pr-2 font-medium exercise-name">${ex.name}</span>
+                                <div class="flex items-center">
+                                    <span class="font-semibold text-gray-400 whitespace-nowrap exercise-details">${ex.sets} x ${ex.reps}</span>
+                                    <!-- NEW: Search Icon Link -->
+                                    <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="ml-4 text-gray-500 hover:text-emerald-400 transition-colors" onclick="event.stopPropagation()" title="Search for this exercise">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                                        </svg>
+                                    </a>
+                                </div>
                             </li>
                         `;
                     });
@@ -201,8 +214,8 @@
                            <div class="flex justify-between items-center mb-4">
                                 <h3 class="text-xl font-bold text-white">${dayData.workout}</h3>
                                 <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span>
-                            </div>
-                            ${exercisesHtml}
+                           </div>
+                           ${exercisesHtml}
                         </div>
                     `;
                 } else {
@@ -293,4 +306,3 @@
     </script>
 </body>
 </html>
-
