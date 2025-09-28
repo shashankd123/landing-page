@@ -151,8 +151,10 @@
                     <!-- Exercise list will be populated here -->
                 </div>
                 <div id="chart-container" class="hidden">
-                     <button id="back-to-history-list-btn" class="mb-4 text-sm text-emerald-400 hover:text-emerald-300">&larr; Back to Exercises</button>
-                    <canvas id="progress-chart"></canvas>
+                    <button id="back-to-history-list-btn" class="mb-4 text-sm text-emerald-400 hover:text-emerald-300">&larr; Back to Exercises</button>
+                    <div class="relative h-64 sm:h-80">
+                        <canvas id="progress-chart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -302,18 +304,62 @@
             else { exercisesForCurrentDay.forEach(ex => { const btn = document.createElement('button'); btn.className = "w-full text-left p-3 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"; btn.textContent = ex.name; btn.onclick = () => showExerciseChart(ex.name); historyExerciseList.appendChild(btn); }); }
             openModal(historyModal, historyModalContent);
         }
+        
         function showExerciseChart(exerciseName) {
             const historyData = { labels: [], weights: [] };
             const sortedDates = Object.keys(workoutHistory).sort();
             sortedDates.forEach(date => { if (workoutHistory[date]?.[exerciseName]?.weight) { historyData.labels.push(date); historyData.weights.push(parseFloat(workoutHistory[date][exerciseName].weight)); } });
+            
             historyExerciseList.classList.add('hidden');
             chartContainer.classList.remove('hidden');
+            
             if (progressChart) progressChart.destroy();
             const ctx = document.getElementById('progress-chart').getContext('2d');
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(52, 211, 153, 0.4)');
+            gradient.addColorStop(1, 'rgba(52, 211, 153, 0)');
+
             progressChart = new Chart(ctx, {
                 type: 'line',
-                data: { labels: historyData.labels, datasets: [{ label: `${exerciseName} Weight (kg)`, data: historyData.weights, borderColor: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.1)', fill: true, tension: 0.1 }] },
-                options: { scales: { y: { beginAtZero: true, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { labels: { color: '#d1d5db' } } } }
+                data: {
+                    labels: historyData.labels,
+                    datasets: [{
+                        label: `${exerciseName} Weight (kg)`,
+                        data: historyData.weights,
+                        borderColor: '#34d399',
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#34d399',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#34d399',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#9ca3af', font: { family: "'Inter', sans-serif" } } },
+                        x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { family: "'Inter', sans-serif" } } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#fff',
+                            bodyColor: '#d1d5db',
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: { label: (context) => `${context.raw} kg` }
+                        }
+                    }
+                }
             });
         }
         
