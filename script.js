@@ -223,7 +223,7 @@ function touchStart(e) {
     isDragging = true;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-    slider.style.transition = 'none'; // Disable transition during drag
+    slider.style.transition = 'none';
 }
 
 function touchMove(e) {
@@ -231,14 +231,18 @@ function touchMove(e) {
     currentX = e.touches[0].clientX;
     currentY = e.touches[0].clientY;
     dist = currentX - startX;
+
+    // **BUG FIX**: Prevent dragging past the boundaries
+    if ((dist > 0 && currentDayIndex === 0) || (dist < 0 && currentDayIndex === weekOrder.length - 1)) {
+        return;
+    }
     
-    // Prioritize vertical scroll
     if (Math.abs(currentY - startY) > Math.abs(dist)) {
         isDragging = false;
         return;
     }
     
-    e.preventDefault(); // Prevent vertical scroll if swiping horizontally
+    e.preventDefault();
     
     const currentTranslate = -currentDayIndex * slider.offsetWidth;
     slider.style.transform = `translateX(${currentTranslate + dist}px)`;
@@ -247,14 +251,14 @@ function touchMove(e) {
 function touchEnd() {
     if (!isDragging) return;
     isDragging = false;
-    slider.style.transition = 'transform 0.3s ease-in-out'; // Re-enable transition
+    slider.style.transition = 'transform 0.3s ease-in-out';
 
     if (dist > threshold) {
         showPrevDay();
     } else if (dist < -threshold) {
         showNextDay();
     } else {
-        updateSlider(); // Snap back to current day if swipe is too short
+        updateSlider();
     }
 }
 
@@ -266,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
     currentDayIndex = (today === 0) ? 6 : today - 1;
     renderWorkoutPlan();
 
-    // Add swipe event listeners
     slider.addEventListener('touchstart', touchStart);
     slider.addEventListener('touchmove', touchMove);
     slider.addEventListener('touchend', touchEnd);
