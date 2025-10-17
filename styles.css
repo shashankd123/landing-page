@@ -38,9 +38,16 @@ footer {
     z-index: 40;
 }
 
-/* Remove the "glow" from footer buttons when they are focused */
 footer button:focus {
     outline: none;
+}
+
+.day-page {
+    display: none; /* Hide all day pages by default */
+}
+
+.day-page.active {
+    display: block; /* Show only the active day page */
 }
 
 textarea::-webkit-scrollbar { width: 8px; }
