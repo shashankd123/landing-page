@@ -32,26 +32,26 @@
         </main>
     
     <div class="fixed bottom-[70px] right-4 z-30">
-        <button id="edit-plan-btn" class="bg-[var(--m3-primary-container)] hover:bg-opacity-90 text-[var(--m3-on-primary-container)] font-bold py-3 px-3 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+        <button id="edit-plan-btn" class="bg-[var(--m3-surface-variant)]/80 backdrop-blur-md border border-[var(--m3-outline)] text-[var(--m3-on-surface-variant)] hover:bg-[var(--m3-secondary-container)] font-bold p-3 rounded-2xl shadow-lg transition-all flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
         </button>
     </div>
 </div>
 
-<footer class="p-3 bg-[var(--m3-surface-variant)]/80 backdrop-blur-sm">
+<footer class="p-3 bg-[var(--m3-surface-variant)]/80 backdrop-blur-md border-t border-[var(--m3-outline)]">
     <div class="flex justify-between items-center max-w-xl mx-auto gap-4">
         <button id="prev-day-btn" class="bg-transparent hover:bg-[var(--m3-secondary-container)] text-white font-bold p-2 rounded-full transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
         </button>
-        <span id="footer-day-indicator" class="text-sm font-bold text-[var(--m3-on-surface)]">Monday</span>
+        <span id="footer-day-indicator" class="text-sm font-bold border border-[var(--m3-outline)] text-[var(--m3-on-surface-variant)] px-3 py-1 rounded-full">Monday</span>
         <button id="next-day-btn" class="bg-transparent hover:bg-[var(--m3-secondary-container)] text-white font-bold p-2 rounded-full transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
         </button>
     </div>
 </footer>
 
-<div id="json-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center p-4 hidden z-50 overflow-y-auto">
-    <div class="bg-[var(--m3-surface-variant)] p-6 rounded-3xl shadow-lg w-full max-w-4xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="modal-content">
+<div id="json-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-md flex justify-center p-4 hidden z-50 overflow-y-auto">
+    <div class="bg-[var(--m3-surface-variant)]/80 backdrop-blur-md border border-[var(--m3-outline)] p-6 rounded-3xl shadow-lg w-full max-w-4xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="modal-content">
         <div class="flex flex-col md:flex-row gap-8">
             <div class="w-full md:w-1/2">
                 <h3 class="text-xl font-bold mb-4 flex items-center gap-2">✨ Generate Plan with AI</h3>

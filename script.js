@@ -78,7 +78,7 @@ function renderWorkoutPlan() {
                     const completedClass = isDone ? 'exercise-completed' : '';
 
                     exercisesHtml += `
-                        <li class="exercise-item flex flex-col gap-1.5 p-2 bg-[var(--m3-surface-variant)] rounded-lg transition-all ${completedClass}" data-name="${ex.name}">
+                        <li class="exercise-item flex flex-col gap-2 p-2 bg-[var(--m3-surface-variant)] rounded-lg transition-all ${completedClass}" data-name="${ex.name}">
                             <div class="flex justify-between items-start gap-3">
                                 <h4 class="text-sm font-bold flex-grow pr-2">${ex.name}</h4>
                                 <div class="flex items-center gap-1 text-[var(--m3-on-surface-variant)]">
@@ -91,15 +91,18 @@ function renderWorkoutPlan() {
                                 <span>Sets x <strong class="text-[var(--m3-on-surface)]">${ex.sets}</strong></span>
                                 <span>Reps <strong class="text-[var(--m3-on-surface)]">${ex.reps}</strong></span>
                             </div>
-                            <div class="flex justify-between items-center gap-3 bg-[var(--m3-surface)] p-1.5 rounded-md">
-                                <div class="flex items-center gap-2 flex-grow">
-                                    <button class="complete-btn" title="Mark as complete">${isDone ? checkIconDone : checkIconNotDone}</button>
-                                    <div class="flex items-center gap-1">
-                                        <input type="number" value="${currentWeight}" placeholder="kg" class="weight-input bg-[var(--m3-surface)] text-center w-14 rounded-md p-1 border border-[var(--m3-outline)] focus:border-[var(--m3-primary)] focus:ring-2 focus:ring-[var(--m3-primary-container)] focus:outline-none transition text-sm" data-name="${ex.name}">
-                                    </div>
+                            <div class="flex items-center justify-between gap-2 bg-[var(--m3-surface)] p-1 rounded-md">
+                                <div class="flex items-center justify-center gap-2 flex-1">
+                                    <span class="text-xs text-[var(--m3-on-surface-variant)]">Weight:</span>
+                                    <input type="number" value="${currentWeight}" placeholder="--" class="weight-input bg-transparent text-center w-12 rounded-md p-1 border border-[var(--m3-outline)] focus:border-[var(--m3-primary)] focus:ring-1 focus:ring-[var(--m3-primary-container)] focus:outline-none transition text-sm" data-name="${ex.name}">
                                 </div>
-                                <div class="text-xs text-center text-[var(--m3-on-surface-variant)]">
+                                <div class="w-px h-6 bg-[var(--m3-outline)]"></div>
+                                <div class="flex-1 text-xs text-center text-[var(--m3-on-surface-variant)]">
                                     Prev: <strong class="text-[var(--m3-on-surface)]">${prevWeight ? `${prevWeight} kg` : 'N/A'}</strong>
+                                </div>
+                                <div class="w-px h-6 bg-[var(--m3-outline)]"></div>
+                                <div class="flex justify-center items-center px-2">
+                                    <button class="complete-btn" title="Mark as complete">${isDone ? checkIconDone : checkIconNotDone}</button>
                                 </div>
                             </div>
                         </li>`;
@@ -108,7 +111,7 @@ function renderWorkoutPlan() {
             exercisesHtml += '</ul>';
             exercisesHtml += '<div class="h-32"></div>'; 
 
-            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
+            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-center items-center mb-3"><h3 class="text-lg font-bold">${dayData.workout}</h3></div>${exercisesHtml}</div>`;
         } else { dayContainer.innerHTML = `<div class="text-center text-gray-500 pt-20">No workout scheduled for ${day}.</div>`; }
         workoutContainer.appendChild(dayContainer);
     });
@@ -135,7 +138,7 @@ const handleWeightInput = debounce((inputElement) => {
     if (hasWeight) {
         listItem.classList.add('exercise-completed');
         completeBtn.innerHTML = checkIconDone;
-    } else {
+    } else if (!workoutHistory[todayStr][exerciseName].done) {
         listItem.classList.remove('exercise-completed');
         completeBtn.innerHTML = checkIconNotDone;
     }
@@ -197,7 +200,7 @@ function showExerciseChart(exerciseName) {
     if (progressChart) progressChart.destroy();
     const ctx = document.getElementById('progress-chart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(163, 199, 255, 0.4)'); // --m3-primary with alpha
+    gradient.addColorStop(0, 'rgba(163, 199, 255, 0.4)');
     gradient.addColorStop(1, 'rgba(163, 199, 255, 0)');
 
     progressChart = new Chart(ctx, {
@@ -207,14 +210,14 @@ function showExerciseChart(exerciseName) {
             datasets: [{ 
                 label: `${exerciseName} Weight (kg)`, 
                 data: historyData.weights, 
-                borderColor: '#a3c7ff', // --m3-primary
+                borderColor: '#a3c7ff',
                 backgroundColor: gradient, 
                 fill: true, 
                 tension: 0.3, 
-                pointBackgroundColor: '#a3c7ff', // --m3-primary
-                pointBorderColor: '#1f2228', // --m3-surface-variant
+                pointBackgroundColor: '#a3c7ff',
+                pointBorderColor: '#1f2228',
                 pointHoverBackgroundColor: '#fff', 
-                pointHoverBorderColor: '#a3c7ff', // --m3-primary
+                pointHoverBorderColor: '#a3c7ff',
                 borderWidth: 2, 
                 pointRadius: 4, 
                 pointHoverRadius: 6 
@@ -227,11 +230,11 @@ function showExerciseChart(exerciseName) {
                 y: { 
                     beginAtZero: false, 
                     grid: { color: 'rgba(255, 255, 255, 0.15)' }, 
-                    ticks: { color: '#c4c6d0', font: { family: "'Inter', sans-serif" } } // --m3-on-surface-variant
+                    ticks: { color: '#c4c6d0', font: { family: "'Inter', sans-serif" } }
                 }, 
                 x: { 
                     grid: { display: false }, 
-                    ticks: { color: '#c4c6d0', font: { family: "'Inter', sans-serif" } } // --m3-on-surface-variant
+                    ticks: { color: '#c4c6d0', font: { family: "'Inter', sans-serif" } }
                 } 
             }, 
             plugins: { 
