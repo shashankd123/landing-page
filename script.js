@@ -3,7 +3,7 @@ const debounce = (func, delay) => { let timeout; return (...args) => { clearTime
 
 // --- DOM element references ---
 const jsonInput = document.getElementById('json-input');
-const slider = document.getElementById('workout-slider');
+const workoutContainer = document.getElementById('workout-container'); // Changed from slider
 const footerDayIndicator = document.getElementById('footer-day-indicator');
 const prevBtn = document.getElementById('prev-day-btn');
 const nextBtn = document.getElementById('next-day-btn');
@@ -50,7 +50,7 @@ function generateAndCopyPrompt() {
 
 // --- UI Rendering & Logic ---
 function renderWorkoutPlan() {
-    slider.innerHTML = '';
+    workoutContainer.innerHTML = ''; // Clear previous days
     let workoutData;
     try { workoutData = JSON.parse(jsonInput.value); } catch (error) { workoutData = defaultWorkoutJSON; }
     const todayStr = getTodayDateString();
@@ -59,10 +59,12 @@ function renderWorkoutPlan() {
     const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
     const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
-    weekOrder.forEach((day) => {
+    weekOrder.forEach((day, index) => {
         const dayData = workoutData[day];
         const dayContainer = document.createElement('div');
-        dayContainer.className = "w-full h-full flex-shrink-0 p-3 sm:p-4";
+        dayContainer.className = "day-page w-full h-full p-3 sm:p-4";
+        dayContainer.dataset.dayIndex = index;
+
         if (dayData && dayData.exercises) {
             const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
             const tagColor = isRestDay ? 'bg-[#3e4659] text-[#c8d9f0]' : 'bg-[#004885] text-[#d3e4ff]';
@@ -106,10 +108,10 @@ function renderWorkoutPlan() {
             exercisesHtml += '</ul>';
             dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
         } else { dayContainer.innerHTML = `<div class="text-center text-gray-500 pt-20">No workout scheduled for ${day}.</div>`; }
-        slider.appendChild(dayContainer);
+        workoutContainer.appendChild(dayContainer);
     });
     addExerciseListeners();
-    updateSlider();
+    updateDayView(); // Use the new function
 }
 
 const handleWeightInput = debounce((inputElement) => {
@@ -163,9 +165,16 @@ function addExerciseListeners() {
     });
 }
 
-function updateSlider() { 
-    slider.style.transition = 'transform 0.3s ease-in-out';
-    slider.style.transform = `translateX(-${currentDayIndex * 100}%)`; 
+// NEW function to handle showing/hiding days
+function updateDayView() { 
+    document.querySelectorAll('.day-page').forEach(page => {
+        if (parseInt(page.dataset.dayIndex) === currentDayIndex) {
+            page.classList.add('active');
+        } else {
+            page.classList.remove('active');
+        }
+    });
+    
     footerDayIndicator.textContent = weekOrder[currentDayIndex];
     prevBtn.disabled = currentDayIndex === 0; 
     nextBtn.disabled = currentDayIndex === weekOrder.length - 1; 
@@ -173,8 +182,8 @@ function updateSlider() {
     nextBtn.classList.toggle('opacity-50', currentDayIndex === weekOrder.length - 1); 
 }
 
-function showNextDay() { if (currentDayIndex < weekOrder.length - 1) { currentDayIndex++; updateSlider(); } }
-function showPrevDay() { if (currentDayIndex > 0) { currentDayIndex--; updateSlider(); } }
+function showNextDay() { if (currentDayIndex < weekOrder.length - 1) { currentDayIndex++; updateDayView(); } }
+function showPrevDay() { if (currentDayIndex > 0) { currentDayIndex--; updateDayView(); } }
 function openModal(modalEl, contentEl) { modalEl.classList.remove('hidden'); setTimeout(() => contentEl.classList.remove('scale-95', 'opacity-0'), 10); }
 function closeModal(modalEl, contentEl) { contentEl.classList.add('scale-95', 'opacity-0'); setTimeout(() => modalEl.classList.add('hidden'), 300); }
 
