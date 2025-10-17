@@ -38,6 +38,11 @@ footer {
     z-index: 40;
 }
 
+/* Remove the "glow" from footer buttons when they are focused */
+footer button:focus {
+    outline: none;
+}
+
 textarea::-webkit-scrollbar { width: 8px; }
 textarea::-webkit-scrollbar-track { background: var(--m3-surface); }
 textarea::-webkit-scrollbar-thumb { background-color: var(--m3-on-surface-variant); border-radius: 20px; border: 3px solid var(--m3-surface); }
