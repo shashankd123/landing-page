@@ -4,7 +4,7 @@ const debounce = (func, delay) => { let timeout; return (...args) => { clearTime
 // --- DOM element references ---
 const jsonInput = document.getElementById('json-input');
 const slider = document.getElementById('workout-slider');
-const footerDayIndicator = document.getElementById('footer-day-indicator'); // New indicator
+const footerDayIndicator = document.getElementById('footer-day-indicator');
 const prevBtn = document.getElementById('prev-day-btn');
 const nextBtn = document.getElementById('next-day-btn');
 const modal = document.getElementById('json-modal'), modalContent = document.getElementById('modal-content'), editPlanBtn = document.getElementById('edit-plan-btn'), closeModalBtn = document.getElementById('close-modal-btn'), loadWorkoutBtn = document.getElementById('load-workout-btn'), feedbackMessageContainer = document.getElementById('feedback-message');
@@ -56,8 +56,8 @@ function renderWorkoutPlan() {
     const todayStr = getTodayDateString();
     const todaysProgress = workoutHistory[todayStr] || {};
 
-    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
     weekOrder.forEach((day) => {
         const dayData = workoutData[day];
@@ -66,7 +66,7 @@ function renderWorkoutPlan() {
         if (dayData && dayData.exercises) {
             const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
             const tagColor = isRestDay ? 'bg-[#3e4659] text-[#c8d9f0]' : 'bg-[#004885] text-[#d3e4ff]';
-            let exercisesHtml = '<ul class="space-y-3 flex-grow">';
+            let exercisesHtml = '<ul class="space-y-2 flex-grow">'; // Reduced space-y
             if (dayData.exercises.length > 0) {
                 dayData.exercises.forEach((ex) => {
                     const progress = todaysProgress[ex.name] || {};
@@ -76,24 +76,24 @@ function renderWorkoutPlan() {
                     const completedClass = isDone ? 'exercise-completed' : '';
 
                     exercisesHtml += `
-                        <li class="exercise-item flex flex-col gap-2 p-3 bg-[var(--m3-surface-variant)] rounded-xl transition-all ${completedClass}" data-name="${ex.name}">
+                        <li class="exercise-item flex flex-col gap-1.5 p-2 bg-[var(--m3-surface-variant)] rounded-lg transition-all ${completedClass}" data-name="${ex.name}">
                             <div class="flex justify-between items-start gap-3">
-                                <h4 class="text-base font-bold flex-grow pr-2">${ex.name}</h4>
+                                <h4 class="text-sm font-bold flex-grow pr-2">${ex.name}</h4>
                                 <div class="flex items-center gap-1 text-[var(--m3-on-surface-variant)]">
-                                    <button class="google-image-search-btn p-2 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="Search for form"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
-                                    <div class="w-px h-5 bg-[var(--m3-outline)]"></div>
-                                    <button class="show-chart-btn p-2 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="View history chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></button>
+                                    <button class="google-image-search-btn p-1.5 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="Search for form"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
+                                    <div class="w-px h-4 bg-[var(--m3-outline)]"></div>
+                                    <button class="show-chart-btn p-1.5 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="View history chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></button>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 text-sm text-[var(--m3-on-surface-variant)]">
+                            <div class="flex items-center gap-4 text-xs text-[var(--m3-on-surface-variant)]">
                                 <span>Sets x <strong class="text-[var(--m3-on-surface)]">${ex.sets}</strong></span>
                                 <span>Reps <strong class="text-[var(--m3-on-surface)]">${ex.reps}</strong></span>
                             </div>
-                            <div class="flex justify-between items-center gap-3 bg-[var(--m3-surface)] p-2 rounded-lg">
+                            <div class="flex justify-between items-center gap-3 bg-[var(--m3-surface)] p-1.5 rounded-md">
                                 <div class="flex items-center gap-2 flex-grow">
                                     <button class="complete-btn" title="Mark as complete">${isDone ? checkIconDone : checkIconNotDone}</button>
                                     <div class="flex items-center gap-1">
-                                        <input type="number" value="${currentWeight}" placeholder="kg" class="weight-input bg-[var(--m3-surface)] text-center w-16 rounded-md p-1 border border-[var(--m3-outline)] focus:border-[var(--m3-primary)] focus:ring-2 focus:ring-[var(--m3-primary-container)] focus:outline-none transition" data-name="${ex.name}">
+                                        <input type="number" value="${currentWeight}" placeholder="kg" class="weight-input bg-[var(--m3-surface)] text-center w-14 rounded-md p-1 border border-[var(--m3-outline)] focus:border-[var(--m3-primary)] focus:ring-2 focus:ring-[var(--m3-primary-container)] focus:outline-none transition text-sm" data-name="${ex.name}">
                                     </div>
                                 </div>
                                 <div class="text-xs text-center text-[var(--m3-on-surface-variant)]">
@@ -104,7 +104,7 @@ function renderWorkoutPlan() {
                 });
             } else { exercisesHtml += `<li class="text-center text-[var(--m3-on-surface-variant)] p-4">Enjoy your rest!</li>`; }
             exercisesHtml += '</ul>';
-            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
+            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
         } else { dayContainer.innerHTML = `<div class="text-center text-gray-500 pt-20">No workout scheduled for ${day}.</div>`; }
         slider.appendChild(dayContainer);
     });
@@ -125,8 +125,8 @@ const handleWeightInput = debounce((inputElement) => {
     workoutHistory[todayStr][exerciseName].done = hasWeight;
     saveHistory();
 
-    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
     if (hasWeight) {
         listItem.classList.add('exercise-completed');
@@ -155,8 +155,8 @@ function addExerciseListeners() {
             workoutHistory[todayStr][exerciseName].done = !isCurrentlyDone;
             saveHistory();
 
-            const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-            const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
             listItem.classList.toggle('exercise-completed');
             btn.innerHTML = !isCurrentlyDone ? checkIconDone : checkIconNotDone;
         });
@@ -165,7 +165,7 @@ function addExerciseListeners() {
 
 function updateSlider() { 
     slider.style.transform = `translateX(-${currentDayIndex * 100}%)`; 
-    footerDayIndicator.textContent = weekOrder[currentDayIndex]; // Update footer text
+    footerDayIndicator.textContent = weekOrder[currentDayIndex];
     prevBtn.disabled = currentDayIndex === 0; 
     nextBtn.disabled = currentDayIndex === weekOrder.length - 1; 
     prevBtn.classList.toggle('opacity-50', currentDayIndex === 0); 
