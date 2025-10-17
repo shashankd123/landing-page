@@ -3,7 +3,7 @@ const debounce = (func, delay) => { let timeout; return (...args) => { clearTime
 
 // --- DOM element references ---
 const jsonInput = document.getElementById('json-input');
-const workoutContainer = document.getElementById('workout-container'); // Changed from slider
+const workoutContainer = document.getElementById('workout-container');
 const footerDayIndicator = document.getElementById('footer-day-indicator');
 const prevBtn = document.getElementById('prev-day-btn');
 const nextBtn = document.getElementById('next-day-btn');
@@ -50,7 +50,7 @@ function generateAndCopyPrompt() {
 
 // --- UI Rendering & Logic ---
 function renderWorkoutPlan() {
-    workoutContainer.innerHTML = ''; // Clear previous days
+    workoutContainer.innerHTML = '';
     let workoutData;
     try { workoutData = JSON.parse(jsonInput.value); } catch (error) { workoutData = defaultWorkoutJSON; }
     const todayStr = getTodayDateString();
@@ -106,12 +106,14 @@ function renderWorkoutPlan() {
                 });
             } else { exercisesHtml += `<li class="text-center text-[var(--m3-on-surface-variant)] p-4">Enjoy your rest!</li>`; }
             exercisesHtml += '</ul>';
+            exercisesHtml += '<div class="h-32"></div>'; 
+
             dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-3"><h3 class="text-lg font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
         } else { dayContainer.innerHTML = `<div class="text-center text-gray-500 pt-20">No workout scheduled for ${day}.</div>`; }
         workoutContainer.appendChild(dayContainer);
     });
     addExerciseListeners();
-    updateDayView(); // Use the new function
+    updateDayView();
 }
 
 const handleWeightInput = debounce((inputElement) => {
@@ -165,7 +167,6 @@ function addExerciseListeners() {
     });
 }
 
-// NEW function to handle showing/hiding days
 function updateDayView() { 
     document.querySelectorAll('.day-page').forEach(page => {
         if (parseInt(page.dataset.dayIndex) === currentDayIndex) {
@@ -196,11 +197,56 @@ function showExerciseChart(exerciseName) {
     if (progressChart) progressChart.destroy();
     const ctx = document.getElementById('progress-chart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(163, 199, 255, 0.4)');
+    gradient.addColorStop(0, 'rgba(163, 199, 255, 0.4)'); // --m3-primary with alpha
     gradient.addColorStop(1, 'rgba(163, 199, 255, 0)');
+
     progressChart = new Chart(ctx, {
-        type: 'line', data: { labels: historyData.labels, datasets: [{ label: `${exerciseName} Weight (kg)`, data: historyData.weights, borderColor: 'var(--m3-primary)', backgroundColor: gradient, fill: true, tension: 0.3, pointBackgroundColor: 'var(--m3-primary)', pointBorderColor: 'var(--m3-surface-variant)', pointHoverBackgroundColor: 'var(--m3-surface-variant)', pointHoverBorderColor: 'var(--m3-primary)', borderWidth: 2, pointRadius: 4, pointHoverRadius: 6 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--m3-on-surface-variant)', font: { family: "'Inter', sans-serif" } } }, x: { grid: { display: false }, ticks: { color: 'var(--m3-on-surface-variant)', font: { family: "'Inter', sans-serif" } } } }, plugins: { legend: { display: false }, tooltip: { backgroundColor: 'var(--m3-surface-variant)', titleColor: 'var(--m3-on-surface)', bodyColor: 'var(--m3-on-surface-variant)', padding: 12, cornerRadius: 12, displayColors: false, callbacks: { label: (context) => `${context.raw} kg` } } } }
+        type: 'line', 
+        data: { 
+            labels: historyData.labels, 
+            datasets: [{ 
+                label: `${exerciseName} Weight (kg)`, 
+                data: historyData.weights, 
+                borderColor: '#a3c7ff', // --m3-primary
+                backgroundColor: gradient, 
+                fill: true, 
+                tension: 0.3, 
+                pointBackgroundColor: '#a3c7ff', // --m3-primary
+                pointBorderColor: '#1f2228', // --m3-surface-variant
+                pointHoverBackgroundColor: '#fff', 
+                pointHoverBorderColor: '#a3c7ff', // --m3-primary
+                borderWidth: 2, 
+                pointRadius: 4, 
+                pointHoverRadius: 6 
+            }] 
+        },
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            scales: { 
+                y: { 
+                    beginAtZero: false, 
+                    grid: { color: 'rgba(255, 255, 255, 0.15)' }, 
+                    ticks: { color: '#c4c6d0', font: { family: "'Inter', sans-serif" } } // --m3-on-surface-variant
+                }, 
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { color: '#c4c6d0', font: { family: "'Inter', sans-serif" } } // --m3-on-surface-variant
+                } 
+            }, 
+            plugins: { 
+                legend: { display: false }, 
+                tooltip: { 
+                    backgroundColor: 'var(--m3-surface-variant)', 
+                    titleColor: 'var(--m3-on-surface)', 
+                    bodyColor: 'var(--m3-on-surface-variant)', 
+                    padding: 12, 
+                    cornerRadius: 12, 
+                    displayColors: false, 
+                    callbacks: { label: (context) => `${context.raw} kg` } 
+                } 
+            } 
+        }
     });
 }
 
