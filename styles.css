@@ -12,12 +12,17 @@
     --m3-outline: #44474f;
 }
 
+html, body {
+    height: 100%; /* Ensure html and body take full height */
+}
+
 body { 
     font-family: 'Inter', sans-serif; 
     -webkit-font-smoothing: antialiased; 
     -moz-osx-font-smoothing: grayscale; 
     background-color: var(--m3-surface); 
     color: var(--m3-on-surface); 
+    margin: 0; /* Remove default body margin */
 }
 
 textarea::-webkit-scrollbar { 
