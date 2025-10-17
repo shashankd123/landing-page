@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().getDay();
     currentDayIndex = (today === 0) ? 6 : today - 1;
     renderWorkoutPlan();
-});
+
 
 editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
 closeModalBtn.addEventListener('click', () => { feedbackMessageContainer.textContent = ''; closeModal(modal, modalContent); });
@@ -301,3 +301,4 @@ prevBtn.addEventListener('click', showPrevDay);
 nextBtn.addEventListener('click', showNextDay);
 aiGenerateBtn.addEventListener('click', generateAndCopyPrompt);
 closeHistoryModalBtn.addEventListener('click', () => closeModal(historyModal, historyModalContent));
+});
