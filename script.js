@@ -66,7 +66,7 @@ function renderWorkoutPlan() {
         if (dayData && dayData.exercises) {
             const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
             const tagColor = isRestDay ? 'bg-[#3e4659] text-[#c8d9f0]' : 'bg-[#004885] text-[#d3e4ff]';
-            let exercisesHtml = '<ul class="space-y-2 flex-grow">'; // Reduced space-y
+            let exercisesHtml = '<ul class="space-y-2 flex-grow">';
             if (dayData.exercises.length > 0) {
                 dayData.exercises.forEach((ex) => {
                     const progress = todaysProgress[ex.name] || {};
@@ -216,6 +216,48 @@ function updateHistoryOnPlanChange(oldPlan, newPlan) {
     });
 }
 
+// --- SWIPE GESTURE HANDLING ---
+let isDragging = false, startX, startY, currentX, currentY, dist, threshold = 50;
+
+function touchStart(e) {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    slider.style.transition = 'none'; // Disable transition during drag
+}
+
+function touchMove(e) {
+    if (!isDragging) return;
+    currentX = e.touches[0].clientX;
+    currentY = e.touches[0].clientY;
+    dist = currentX - startX;
+    
+    // Prioritize vertical scroll
+    if (Math.abs(currentY - startY) > Math.abs(dist)) {
+        isDragging = false;
+        return;
+    }
+    
+    e.preventDefault(); // Prevent vertical scroll if swiping horizontally
+    
+    const currentTranslate = -currentDayIndex * slider.offsetWidth;
+    slider.style.transform = `translateX(${currentTranslate + dist}px)`;
+}
+
+function touchEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    slider.style.transition = 'transform 0.3s ease-in-out'; // Re-enable transition
+
+    if (dist > threshold) {
+        showPrevDay();
+    } else if (dist < -threshold) {
+        showNextDay();
+    } else {
+        updateSlider(); // Snap back to current day if swipe is too short
+    }
+}
+
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
@@ -223,6 +265,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().getDay();
     currentDayIndex = (today === 0) ? 6 : today - 1;
     renderWorkoutPlan();
+
+    // Add swipe event listeners
+    slider.addEventListener('touchstart', touchStart);
+    slider.addEventListener('touchmove', touchMove);
+    slider.addEventListener('touchend', touchEnd);
 });
 
 editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
