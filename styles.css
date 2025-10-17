@@ -27,7 +27,8 @@ body {
 }
 
 main {
-    padding-bottom: 70px; /* Add padding to prevent content from being hidden by the footer */
+    /* Increased padding to create more scroll space at the bottom */
+    padding-bottom: 140px; 
 }
 
 footer {
