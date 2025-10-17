@@ -21,90 +21,87 @@
 </head>
 <body class="antialiased">
 
-<div id="app-container" class="flex flex-col min-h-screen overflow-hidden">
+<div id="app-container" class="flex flex-col h-full">
     <header class="relative flex justify-center items-center p-3">
         <div class="text-center">
             <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--m3-primary)]">Workout Planner</h1>
-            <p id="current-day-indicator" class="text-[var(--m3-on-surface-variant)] mt-1 text-base font-medium">Monday</p>
-        </div>
+            </div>
     </header>
 
-    <main class="flex-grow overflow-hidden relative">
+    <main class="flex-grow overflow-y-auto">
         <div id="workout-slider" class="h-full flex transition-transform duration-300 ease-in-out">
             </div>
     </main>
     
-    <div class="fixed bottom-24 right-4 z-30">
+    <div class="fixed bottom-[70px] right-4 z-30">
         <button id="edit-plan-btn" class="bg-[var(--m3-primary-container)] hover:bg-opacity-90 text-[var(--m3-on-primary-container)] font-bold py-3 px-3 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg>
         </button>
     </div>
-
-    <footer class="p-3 bg-[var(--m3-surface-variant)]/80 backdrop-blur-sm mt-auto">
-        <div class="flex justify-between items-center max-w-xl mx-auto gap-4">
-            <button id="prev-day-btn" class="bg-transparent hover:bg-[var(--m3-secondary-container)] text-white font-bold p-2 rounded-full transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-            </button>
-            <div class="text-sm font-medium text-[var(--m3-on-surface-variant)]">Daily Navigation</div>
-            <button id="next-day-btn" class="bg-transparent hover:bg-[var(--m3-secondary-container)] text-white font-bold p-2 rounded-full transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-            </button>
-        </div>
-    </footer>
 </div>
 
-    <div id="json-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center p-4 hidden z-50 overflow-y-auto">
-        <div class="bg-[var(--m3-surface-variant)] p-6 rounded-3xl shadow-lg w-full max-w-4xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="modal-content">
-            <div class="flex flex-col md:flex-row gap-8">
-                <div class="w-full md:w-1/2">
-                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">✨ Generate Plan with AI</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-4">
-                            <div><label for="goal" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Primary Goal</label><select id="goal" class="form-input w-full"><option>Muscle Gain</option><option>Fat Loss</option><option>General Fitness</option><option>Strength Training</option></select></div>
-                            <div><label for="level" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Experience Level</label><select id="level" class="form-input w-full"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
-                            <div><label for="gender" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Gender</label><select id="gender" class="form-input w-full"><option>Male</option><option>Female</option><option>Prefer not to say</option></select></div>
-                            <div><label for="age" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Age</label><input type="number" id="age" value="25" class="form-input w-full"></div>
-                            <div><label for="weight" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Weight (kg)</label><input type="number" id="weight" value="70" class="form-input w-full"></div>
-                        </div>
-                        <div class="space-y-4">
-                            <div><label for="height" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Height (cm)</label><input type="number" id="height" value="175" class="form-input w-full"></div>
-                            <div><label for="workout_type" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Workout Style</label><select id="workout_type" class="form-input w-full"><option selected>Bodybuilding</option><option>Powerlifting</option><option>CrossFit</option><option>General Hypertrophy</option></select></div>
-                            <div><label for="equipment" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Equipment Access</label><select id="equipment" class="form-input w-full"><option>Full Gym</option><option>Dumbbells Only</option><option>Bodyweight Only</option><option>Basic Home Gym</option></select></div>
-                            <div><label for="days" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Days per Week</label><input type="number" id="days" value="4" min="1" max="7" class="form-input w-full"></div>
-                            <div><label for="time_available" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Time per session (mins)</label><input type="number" id="time_available" value="60" min="15" max="180" class="form-input w-full"></div>
-                        </div>
-                        <div class="sm:col-span-2"><label for="requests" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Special Requests</label><input type="text" id="requests" placeholder="e.g., focus on legs, no jumping" class="form-input w-full"></div>
-                        <div class="sm:col-span-2"><button id="ai-generate-btn" class="w-full bg-[var(--m3-primary)] hover:opacity-90 text-[var(--m3-on-primary)] font-bold py-2.5 px-4 rounded-full transition-opacity flex items-center justify-center gap-2">Create Prompt & Open Gemini</button></div>
-                    </div>
-                </div>
-                <div class="w-full md:w-1/2 flex flex-col">
-                    <h3 class="text-xl font-bold mb-4">Paste AI Response Here</h3>
-                    <textarea id="json-input" class="w-full flex-grow bg-[var(--m3-surface)] border border-[var(--m3-outline)] rounded-2xl p-3 text-[var(--m3-on-surface-variant)] text-xs font-mono focus:ring-2 focus:ring-[var(--m3-primary)] focus:border-[var(--m3-primary)] transition duration-200 resize-none" spellcheck="false" placeholder="After generating the plan in Gemini, copy the JSON response and paste it here."></textarea>
-                </div>
-            </div>
-            <div id="feedback-message" class="mt-4 text-green-400 text-sm font-medium text-center min-h-[20px]"></div>
-            <div class="flex justify-end gap-4 mt-4">
-                <button id="close-modal-btn" class="bg-[var(--m3-secondary-container)] hover:bg-opacity-80 text-[var(--m3-on-secondary-container)] font-bold py-2 px-6 rounded-full transition-colors">Cancel</button>
-                <button id="load-workout-btn" class="bg-[var(--m3-primary)] hover:opacity-90 text-[var(--m3-on-primary)] font-bold py-2 px-6 rounded-full transition-colors">Save & Use Plan</button>
-            </div>
-        </div>
+<footer class="p-3 bg-[var(--m3-surface-variant)]/80 backdrop-blur-sm">
+    <div class="flex justify-between items-center max-w-xl mx-auto gap-4">
+        <button id="prev-day-btn" class="bg-transparent hover:bg-[var(--m3-secondary-container)] text-white font-bold p-2 rounded-full transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        </button>
+        <span id="footer-day-indicator" class="text-sm font-bold text-[var(--m3-on-surface)]">Monday</span>
+        <button id="next-day-btn" class="bg-transparent hover:bg-[var(--m3-secondary-container)] text-white font-bold p-2 rounded-full transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+        </button>
     </div>
-    
-    <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center p-4 hidden z-50 overflow-y-auto">
-        <div class="bg-[var(--m3-surface-variant)] p-6 rounded-3xl shadow-lg w-full max-w-2xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="history-modal-content">
-             <div class="flex justify-between items-center mb-4">
-                <h3 id="history-modal-title" class="text-xl font-bold">Exercise History</h3>
-                <button id="close-history-modal-btn" class="text-[var(--m3-on-surface-variant)] text-3xl font-light hover:text-white">&times;</button>
-            </div>
-            <div id="history-view">
-                <div id="chart-container">
-                    <div class="relative h-64 sm:h-80">
-                        <canvas id="progress-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+</footer>
 
+<div id="json-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center p-4 hidden z-50 overflow-y-auto">
+    <div class="bg-[var(--m3-surface-variant)] p-6 rounded-3xl shadow-lg w-full max-w-4xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="modal-content">
+        <div class="flex flex-col md:flex-row gap-8">
+            <div class="w-full md:w-1/2">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2">✨ Generate Plan with AI</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div><label for="goal" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Primary Goal</label><select id="goal" class="form-input w-full"><option>Muscle Gain</option><option>Fat Loss</option><option>General Fitness</option><option>Strength Training</option></select></div>
+                        <div><label for="level" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Experience Level</label><select id="level" class="form-input w-full"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></div>
+                        <div><label for="gender" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Gender</label><select id="gender" class="form-input w-full"><option>Male</option><option>Female</option><option>Prefer not to say</option></select></div>
+                        <div><label for="age" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Age</label><input type="number" id="age" value="25" class="form-input w-full"></div>
+                        <div><label for="weight" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Weight (kg)</label><input type="number" id="weight" value="70" class="form-input w-full"></div>
+                    </div>
+                    <div class="space-y-4">
+                        <div><label for="height" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Height (cm)</label><input type="number" id="height" value="175" class="form-input w-full"></div>
+                        <div><label for="workout_type" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Workout Style</label><select id="workout_type" class="form-input w-full"><option selected>Bodybuilding</option><option>Powerlifting</option><option>CrossFit</option><option>General Hypertrophy</option></select></div>
+                        <div><label for="equipment" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Equipment Access</label><select id="equipment" class="form-input w-full"><option>Full Gym</option><option>Dumbbells Only</option><option>Bodyweight Only</option><option>Basic Home Gym</option></select></div>
+                        <div><label for="days" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Days per Week</label><input type="number" id="days" value="4" min="1" max="7" class="form-input w-full"></div>
+                        <div><label for="time_available" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Time per session (mins)</label><input type="number" id="time_available" value="60" min="15" max="180" class="form-input w-full"></div>
+                    </div>
+                    <div class="sm:col-span-2"><label for="requests" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Special Requests</label><input type="text" id="requests" placeholder="e.g., focus on legs, no jumping" class="form-input w-full"></div>
+                    <div class="sm:col-span-2"><button id="ai-generate-btn" class="w-full bg-[var(--m3-primary)] hover:opacity-90 text-[var(--m3-on-primary)] font-bold py-2.5 px-4 rounded-full transition-opacity flex items-center justify-center gap-2">Create Prompt & Open Gemini</button></div>
+                </div>
+            </div>
+            <div class="w-full md:w-1/2 flex flex-col">
+                <h3 class="text-xl font-bold mb-4">Paste AI Response Here</h3>
+                <textarea id="json-input" class="w-full flex-grow bg-[var(--m3-surface)] border border-[var(--m3-outline)] rounded-2xl p-3 text-[var(--m3-on-surface-variant)] text-xs font-mono focus:ring-2 focus:ring-[var(--m3-primary)] focus:border-[var(--m3-primary)] transition duration-200 resize-none" spellcheck="false" placeholder="After generating the plan in Gemini, copy the JSON response and paste it here."></textarea>
+            </div>
+        </div>
+        <div id="feedback-message" class="mt-4 text-green-400 text-sm font-medium text-center min-h-[20px]"></div>
+        <div class="flex justify-end gap-4 mt-4">
+            <button id="close-modal-btn" class="bg-[var(--m3-secondary-container)] hover:bg-opacity-80 text-[var(--m3-on-secondary-container)] font-bold py-2 px-6 rounded-full transition-colors">Cancel</button>
+            <button id="load-workout-btn" class="bg-[var(--m3-primary)] hover:opacity-90 text-[var(--m3-on-primary)] font-bold py-2 px-6 rounded-full transition-colors">Save & Use Plan</button>
+        </div>
+    </div>
+</div>
+<div id="history-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center p-4 hidden z-50 overflow-y-auto">
+    <div class="bg-[var(--m3-surface-variant)] p-6 rounded-3xl shadow-lg w-full max-w-2xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="history-modal-content">
+         <div class="flex justify-between items-center mb-4">
+            <h3 id="history-modal-title" class="text-xl font-bold">Exercise History</h3>
+            <button id="close-history-modal-btn" class="text-[var(--m3-on-surface-variant)] text-3xl font-light hover:text-white">&times;</button>
+        </div>
+        <div id="history-view">
+            <div id="chart-container">
+                <div class="relative h-64 sm:h-80">
+                    <canvas id="progress-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
