@@ -1,6 +1,6 @@
 // --- Utils ---
 const appContainer = document.getElementById('app-container');
-const setAppHeight = () => { if (appContainer) appContainer.style.height = `${window.innerHeight}px`; };
+// Removed setAppHeight as min-h-screen and body height: 100% will handle it
 const debounce = (func, delay) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; };
 
 // --- DOM element references ---
@@ -41,7 +41,7 @@ function getPreviousWeight(exerciseName) {
 function generateAndCopyPrompt() {
     feedbackMessageContainer.textContent = '';
     const goal = document.getElementById('goal').value, level = document.getElementById('level').value, days = document.getElementById('days').value, requests = document.getElementById('requests').value || 'None', gender = document.getElementById('gender').value, age = document.getElementById('age').value, height = document.getElementById('height').value, weight = document.getElementById('weight').value, workoutType = document.getElementById('workout_type').value, equipment = document.getElementById('equipment').value, timeAvailable = document.getElementById('time_available').value;
-    const userPrompt = `You are an expert fitness coach. Create a highly detailed and personalized 7-day workout plan for a user with the following details:\n- Goal: ${goal}\n- Experience Level: ${level}\n- Gender: ${gender}\n- Age: ${age}\n- Weight: ${weight} kg\n- Height: ${height} cm\n- Preferred Workout Style: ${workoutType}\n- Equipment Access: ${equipment}\n- Training Days per Week: ${days}\n- Time Available per Session: ${timeAvailable} minutes\n- Special Requests: ${requests}\n\nYour response MUST be ONLY the raw JSON object, without any surrounding text, explanations, or markdown formatting. The JSON must follow this exact structure:\n{\n  "Monday": {"workout": "Workout Type", "exercises": [{"name": "Exercise Name", "sets": number, "reps": "rep range"}]},\n  "Tuesday": {"workout": "...", "exercises": [...]},\n  "Wednesday": {"workout": "...", "exercises": [...]},\n  "Thursday": {"workout": "...", "exercises": [...]},\n  "Friday": {"workout": "...", "exercises": [...]},\n  "Saturday": {"workout": "...", "exercises": [...]},\n  "Sunday": {"workout": "...", "exercises": [...]}\n}\n\nFor rest days, the "workout" should be "Rest Day" and the "exercises" array should be empty.`;
+    const userPrompt = `You are an expert fitness coach. Create a highly detailed and personalized 7-day workout plan for a user with the following details:\n- Goal: ${goal}\n- Experience Level: ${level}\n- Gender: ${gender}\n- Age: ${age} kg\n- Weight: ${weight} kg\n- Height: ${height} cm\n- Preferred Workout Style: ${workoutType}\n- Equipment Access: ${equipment}\n- Training Days per Week: ${days}\n- Time Available per Session: ${timeAvailable} minutes\n- Special Requests: ${requests}\n\nYour response MUST be ONLY the raw JSON object, without any surrounding text, explanations, or markdown formatting. The JSON must follow this exact structure:\n{\n  "Monday": {"workout": "Workout Type", "exercises": [{"name": "Exercise Name", "sets": number, "reps": "rep range"}]},\n  "Tuesday": {"workout": "...", "exercises": [...]},\n  "Wednesday": {"workout": "...", "exercises": [...]},\n  "Thursday": {"workout": "...", "exercises": [...]},\n  "Friday": {"workout": "...", "exercises": [...]},\n  "Saturday": {"workout": "...", "exercises": [...]},\n  "Sunday": {"workout": "...", "exercises": [...]}\n}\n\nFor rest days, the "workout" should be "Rest Day" and the "exercises" array should be empty.`;
     navigator.clipboard.writeText(userPrompt).then(() => {
         feedbackMessageContainer.textContent = '✅ Prompt copied! Paste it into the new Gemini tab.';
         window.open('https://gemini.google.com', '_blank');
@@ -64,11 +64,11 @@ function renderWorkoutPlan() {
     weekOrder.forEach((day) => {
         const dayData = workoutData[day];
         const dayContainer = document.createElement('div');
-        dayContainer.className = "w-full h-full flex-shrink-0 p-4 sm:p-6 overflow-y-auto";
+        dayContainer.className = "w-full h-full flex-shrink-0 p-3 sm:p-4 overflow-y-auto"; // Reduced padding
         if (dayData && dayData.exercises) {
             const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
             const tagColor = isRestDay ? 'bg-[#3e4659] text-[#c8d9f0]' : 'bg-[#004885] text-[#d3e4ff]';
-            let exercisesHtml = '<ul class="space-y-4 flex-grow">';
+            let exercisesHtml = '<ul class="space-y-3 flex-grow">'; // Reduced space-y
             if (dayData.exercises.length > 0) {
                 dayData.exercises.forEach((ex, exIndex) => {
                     const progress = todaysProgress[ex.name] || {};
@@ -78,27 +78,27 @@ function renderWorkoutPlan() {
                     const completedClass = isDone ? 'exercise-completed' : '';
 
                     exercisesHtml += `
-                        <li class="exercise-item flex flex-col gap-3 p-4 bg-[var(--m3-surface-variant)] rounded-2xl transition-all ${completedClass}" data-name="${ex.name}">
-                            <div class="flex justify-between items-start gap-4">
-                                <h4 class="text-xl font-bold flex-grow pr-2">${ex.name}</h4>
+                        <li class="exercise-item flex flex-col gap-2 p-3 bg-[var(--m3-surface-variant)] rounded-xl transition-all ${completedClass}" data-name="${ex.name}">
+                            <div class="flex justify-between items-start gap-3">
+                                <h4 class="text-lg font-bold flex-grow pr-2">${ex.name}</h4>
                                 <div class="flex items-center gap-1 text-[var(--m3-on-surface-variant)]">
                                     <button class="google-image-search-btn p-2 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="Search for form"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
                                     <div class="w-px h-5 bg-[var(--m3-outline)]"></div>
                                     <button class="show-chart-btn p-2 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="View history chart"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></button>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-6 text-sm text-[var(--m3-on-surface-variant)]">
+                            <div class="flex items-center gap-4 text-sm text-[var(--m3-on-surface-variant)]">
                                 <span>Sets x <strong class="text-[var(--m3-on-surface)]">${ex.sets}</strong></span>
                                 <span>Reps <strong class="text-[var(--m3-on-surface)]">${ex.reps}</strong></span>
                             </div>
-                            <div class="flex justify-between items-center gap-4 bg-[var(--m3-surface)] p-3 rounded-xl">
-                                <div class="flex items-center gap-3 flex-grow">
+                            <div class="flex justify-between items-center gap-3 bg-[var(--m3-surface)] p-2 rounded-lg">
+                                <div class="flex items-center gap-2 flex-grow">
                                     <button class="complete-btn" title="Mark as complete">${isDone ? checkIconDone : checkIconNotDone}</button>
-                                    <div class="flex items-center gap-2">
-                                        <input type="number" value="${currentWeight}" placeholder="kg" class="weight-input bg-[var(--m3-surface)] text-center w-20 rounded-lg p-2 border border-[var(--m3-outline)] focus:border-[var(--m3-primary)] focus:ring-2 focus:ring-[var(--m3-primary-container)] focus:outline-none transition" data-name="${ex.name}">
+                                    <div class="flex items-center gap-1">
+                                        <input type="number" value="${currentWeight}" placeholder="kg" class="weight-input bg-[var(--m3-surface)] text-center w-16 rounded-md p-1 border border-[var(--m3-outline)] focus:border-[var(--m3-primary)] focus:ring-2 focus:ring-[var(--m3-primary-container)] focus:outline-none transition" data-name="${ex.name}">
                                     </div>
                                 </div>
-                                <div class="text-sm text-center text-[var(--m3-on-surface-variant)]">
+                                <div class="text-xs text-center text-[var(--m3-on-surface-variant)]">
                                     Prev: <strong class="text-[var(--m3-on-surface)]">${prevWeight ? `${prevWeight} kg` : 'N/A'}</strong>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@ function renderWorkoutPlan() {
                 });
             } else { exercisesHtml += `<li class="text-center text-[var(--m3-on-surface-variant)] p-4">Enjoy your rest!</li>`; }
             exercisesHtml += '</ul>';
-            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-5"><h3 class="text-xl font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2.5 py-1 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
+            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold">${dayData.workout}</h3><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${tagColor}">${day.toUpperCase()}</span></div>${exercisesHtml}</div>`;
         } else { dayContainer.innerHTML = `<div class="text-center text-gray-500 pt-20">No workout scheduled for ${day}.</div>`; }
         slider.appendChild(dayContainer);
     });
@@ -212,15 +212,14 @@ function updateHistoryOnPlanChange(oldPlan, newPlan) {
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    setAppHeight();
+    // Removed setAppHeight() call here.
     loadHistory();
     loadPlan();
     const today = new Date().getDay();
     currentDayIndex = (today === 0) ? 6 : today - 1;
     renderWorkoutPlan();
 });
-window.addEventListener('resize', setAppHeight);
-window.addEventListener('orientationchange', setAppHeight);
+// Removed window.addEventListener('resize', setAppHeight); and orientationchange
 editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
 closeModalBtn.addEventListener('click', () => { feedbackMessageContainer.textContent = ''; closeModal(modal, modalContent); });
 loadWorkoutBtn.addEventListener('click', () => {
