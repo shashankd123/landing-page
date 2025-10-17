@@ -1,12 +1,10 @@
 // --- Utils ---
-const appContainer = document.getElementById('app-container');
-// Removed setAppHeight as min-h-screen and body height: 100% will handle it
 const debounce = (func, delay) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; };
 
 // --- DOM element references ---
 const jsonInput = document.getElementById('json-input');
 const slider = document.getElementById('workout-slider');
-const dayIndicator = document.getElementById('current-day-indicator');
+const footerDayIndicator = document.getElementById('footer-day-indicator'); // New indicator
 const prevBtn = document.getElementById('prev-day-btn');
 const nextBtn = document.getElementById('next-day-btn');
 const modal = document.getElementById('json-modal'), modalContent = document.getElementById('modal-content'), editPlanBtn = document.getElementById('edit-plan-btn'), closeModalBtn = document.getElementById('close-modal-btn'), loadWorkoutBtn = document.getElementById('load-workout-btn'), feedbackMessageContainer = document.getElementById('feedback-message');
@@ -41,7 +39,7 @@ function getPreviousWeight(exerciseName) {
 function generateAndCopyPrompt() {
     feedbackMessageContainer.textContent = '';
     const goal = document.getElementById('goal').value, level = document.getElementById('level').value, days = document.getElementById('days').value, requests = document.getElementById('requests').value || 'None', gender = document.getElementById('gender').value, age = document.getElementById('age').value, height = document.getElementById('height').value, weight = document.getElementById('weight').value, workoutType = document.getElementById('workout_type').value, equipment = document.getElementById('equipment').value, timeAvailable = document.getElementById('time_available').value;
-    const userPrompt = `You are an expert fitness coach. Create a highly detailed and personalized 7-day workout plan for a user with the following details:\n- Goal: ${goal}\n- Experience Level: ${level}\n- Gender: ${gender}\n- Age: ${age} kg\n- Weight: ${weight} kg\n- Height: ${height} cm\n- Preferred Workout Style: ${workoutType}\n- Equipment Access: ${equipment}\n- Training Days per Week: ${days}\n- Time Available per Session: ${timeAvailable} minutes\n- Special Requests: ${requests}\n\nYour response MUST be ONLY the raw JSON object, without any surrounding text, explanations, or markdown formatting. The JSON must follow this exact structure:\n{\n  "Monday": {"workout": "Workout Type", "exercises": [{"name": "Exercise Name", "sets": number, "reps": "rep range"}]},\n  "Tuesday": {"workout": "...", "exercises": [...]},\n  "Wednesday": {"workout": "...", "exercises": [...]},\n  "Thursday": {"workout": "...", "exercises": [...]},\n  "Friday": {"workout": "...", "exercises": [...]},\n  "Saturday": {"workout": "...", "exercises": [...]},\n  "Sunday": {"workout": "...", "exercises": [...]}\n}\n\nFor rest days, the "workout" should be "Rest Day" and the "exercises" array should be empty.`;
+    const userPrompt = `You are an expert fitness coach. Create a highly detailed and personalized 7-day workout plan for a user with the following details:\n- Goal: ${goal}\n- Experience Level: ${level}\n- Gender: ${gender}\n- Age: ${age}\n- Weight: ${weight} kg\n- Height: ${height} cm\n- Preferred Workout Style: ${workoutType}\n- Equipment Access: ${equipment}\n- Training Days per Week: ${days}\n- Time Available per Session: ${timeAvailable} minutes\n- Special Requests: ${requests}\n\nYour response MUST be ONLY the raw JSON object, without any surrounding text, explanations, or markdown formatting. The JSON must follow this exact structure:\n{\n  "Monday": {"workout": "Workout Type", "exercises": [{"name": "Exercise Name", "sets": number, "reps": "rep range"}]},\n  "Tuesday": {"workout": "...", "exercises": [...]},\n  "Wednesday": {"workout": "...", "exercises": [...]},\n  "Thursday": {"workout": "...", "exercises": [...]},\n  "Friday": {"workout": "...", "exercises": [...]},\n  "Saturday": {"workout": "...", "exercises": [...]},\n  "Sunday": {"workout": "...", "exercises": [...]}\n}\n\nFor rest days, the "workout" should be "Rest Day" and the "exercises" array should be empty.`;
     navigator.clipboard.writeText(userPrompt).then(() => {
         feedbackMessageContainer.textContent = '✅ Prompt copied! Paste it into the new Gemini tab.';
         window.open('https://gemini.google.com', '_blank');
@@ -58,19 +56,19 @@ function renderWorkoutPlan() {
     const todayStr = getTodayDateString();
     const todaysProgress = workoutHistory[todayStr] || {};
 
-    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
     weekOrder.forEach((day) => {
         const dayData = workoutData[day];
         const dayContainer = document.createElement('div');
-        dayContainer.className = "w-full h-full flex-shrink-0 p-3 sm:p-4 overflow-y-auto"; // Reduced padding
+        dayContainer.className = "w-full h-full flex-shrink-0 p-3 sm:p-4";
         if (dayData && dayData.exercises) {
             const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
             const tagColor = isRestDay ? 'bg-[#3e4659] text-[#c8d9f0]' : 'bg-[#004885] text-[#d3e4ff]';
-            let exercisesHtml = '<ul class="space-y-3 flex-grow">'; // Reduced space-y
+            let exercisesHtml = '<ul class="space-y-3 flex-grow">';
             if (dayData.exercises.length > 0) {
-                dayData.exercises.forEach((ex, exIndex) => {
+                dayData.exercises.forEach((ex) => {
                     const progress = todaysProgress[ex.name] || {};
                     const isDone = progress.done || false;
                     const currentWeight = progress.weight || '';
@@ -80,7 +78,7 @@ function renderWorkoutPlan() {
                     exercisesHtml += `
                         <li class="exercise-item flex flex-col gap-2 p-3 bg-[var(--m3-surface-variant)] rounded-xl transition-all ${completedClass}" data-name="${ex.name}">
                             <div class="flex justify-between items-start gap-3">
-                                <h4 class="text-lg font-bold flex-grow pr-2">${ex.name}</h4>
+                                <h4 class="text-base font-bold flex-grow pr-2">${ex.name}</h4>
                                 <div class="flex items-center gap-1 text-[var(--m3-on-surface-variant)]">
                                     <button class="google-image-search-btn p-2 rounded-full hover:bg-[var(--m3-secondary-container)] transition-colors" title="Search for form"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg></button>
                                     <div class="w-px h-5 bg-[var(--m3-outline)]"></div>
@@ -127,8 +125,8 @@ const handleWeightInput = debounce((inputElement) => {
     workoutHistory[todayStr][exerciseName].done = hasWeight;
     saveHistory();
 
-    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+    const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
     if (hasWeight) {
         listItem.classList.add('exercise-completed');
@@ -157,15 +155,23 @@ function addExerciseListeners() {
             workoutHistory[todayStr][exerciseName].done = !isCurrentlyDone;
             saveHistory();
 
-            const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-            const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
             listItem.classList.toggle('exercise-completed');
             btn.innerHTML = !isCurrentlyDone ? checkIconDone : checkIconNotDone;
         });
     });
 }
 
-function updateSlider() { slider.style.transform = `translateX(-${currentDayIndex * 100}%)`; dayIndicator.textContent = weekOrder[currentDayIndex]; prevBtn.disabled = currentDayIndex === 0; nextBtn.disabled = currentDayIndex === weekOrder.length - 1; prevBtn.classList.toggle('opacity-50', currentDayIndex === 0); nextBtn.classList.toggle('opacity-50', currentDayIndex === weekOrder.length - 1); }
+function updateSlider() { 
+    slider.style.transform = `translateX(-${currentDayIndex * 100}%)`; 
+    footerDayIndicator.textContent = weekOrder[currentDayIndex]; // Update footer text
+    prevBtn.disabled = currentDayIndex === 0; 
+    nextBtn.disabled = currentDayIndex === weekOrder.length - 1; 
+    prevBtn.classList.toggle('opacity-50', currentDayIndex === 0); 
+    nextBtn.classList.toggle('opacity-50', currentDayIndex === weekOrder.length - 1); 
+}
+
 function showNextDay() { if (currentDayIndex < weekOrder.length - 1) { currentDayIndex++; updateSlider(); } }
 function showPrevDay() { if (currentDayIndex > 0) { currentDayIndex--; updateSlider(); } }
 function openModal(modalEl, contentEl) { modalEl.classList.remove('hidden'); setTimeout(() => contentEl.classList.remove('scale-95', 'opacity-0'), 10); }
@@ -212,14 +218,13 @@ function updateHistoryOnPlanChange(oldPlan, newPlan) {
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Removed setAppHeight() call here.
     loadHistory();
     loadPlan();
     const today = new Date().getDay();
     currentDayIndex = (today === 0) ? 6 : today - 1;
     renderWorkoutPlan();
 });
-// Removed window.addEventListener('resize', setAppHeight); and orientationchange
+
 editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
 closeModalBtn.addEventListener('click', () => { feedbackMessageContainer.textContent = ''; closeModal(modal, modalContent); });
 loadWorkoutBtn.addEventListener('click', () => {
