@@ -164,6 +164,7 @@ function addExerciseListeners() {
 }
 
 function updateSlider() { 
+    slider.style.transition = 'transform 0.3s ease-in-out';
     slider.style.transform = `translateX(-${currentDayIndex * 100}%)`; 
     footerDayIndicator.textContent = weekOrder[currentDayIndex];
     prevBtn.disabled = currentDayIndex === 0; 
@@ -216,52 +217,6 @@ function updateHistoryOnPlanChange(oldPlan, newPlan) {
     });
 }
 
-// --- SWIPE GESTURE HANDLING ---
-let isDragging = false, startX, startY, currentX, currentY, dist, threshold = 50;
-
-function touchStart(e) {
-    isDragging = true;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    slider.style.transition = 'none';
-}
-
-function touchMove(e) {
-    if (!isDragging) return;
-    currentX = e.touches[0].clientX;
-    currentY = e.touches[0].clientY;
-    dist = currentX - startX;
-
-    // **BUG FIX**: Prevent dragging past the boundaries
-    if ((dist > 0 && currentDayIndex === 0) || (dist < 0 && currentDayIndex === weekOrder.length - 1)) {
-        return;
-    }
-    
-    if (Math.abs(currentY - startY) > Math.abs(dist)) {
-        isDragging = false;
-        return;
-    }
-    
-    e.preventDefault();
-    
-    const currentTranslate = -currentDayIndex * slider.offsetWidth;
-    slider.style.transform = `translateX(${currentTranslate + dist}px)`;
-}
-
-function touchEnd() {
-    if (!isDragging) return;
-    isDragging = false;
-    slider.style.transition = 'transform 0.3s ease-in-out';
-
-    if (dist > threshold) {
-        showPrevDay();
-    } else if (dist < -threshold) {
-        showNextDay();
-    } else {
-        updateSlider();
-    }
-}
-
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
@@ -269,10 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().getDay();
     currentDayIndex = (today === 0) ? 6 : today - 1;
     renderWorkoutPlan();
-
-    slider.addEventListener('touchstart', touchStart);
-    slider.addEventListener('touchmove', touchMove);
-    slider.addEventListener('touchend', touchEnd);
 });
 
 editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
