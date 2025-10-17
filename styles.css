@@ -13,7 +13,8 @@
 }
 
 html, body {
-    height: 100%; /* Ensure html and body take full height */
+    height: 100%;
+    overflow: hidden; /* Prevent scrolling on the body */
 }
 
 body { 
@@ -22,22 +23,24 @@ body {
     -moz-osx-font-smoothing: grayscale; 
     background-color: var(--m3-surface); 
     color: var(--m3-on-surface); 
-    margin: 0; /* Remove default body margin */
+    margin: 0;
 }
 
-textarea::-webkit-scrollbar { 
-    width: 8px; 
+main {
+    padding-bottom: 70px; /* Add padding to prevent content from being hidden by the footer */
 }
 
-textarea::-webkit-scrollbar-track { 
-    background: var(--m3-surface); 
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 40;
 }
 
-textarea::-webkit-scrollbar-thumb { 
-    background-color: var(--m3-on-surface-variant); 
-    border-radius: 20px; 
-    border: 3px solid var(--m3-surface); 
-}
+textarea::-webkit-scrollbar { width: 8px; }
+textarea::-webkit-scrollbar-track { background: var(--m3-surface); }
+textarea::-webkit-scrollbar-thumb { background-color: var(--m3-on-surface-variant); border-radius: 20px; border: 3px solid var(--m3-surface); }
 
 .form-input { 
     background-color: var(--m3-surface); 
@@ -46,25 +49,21 @@ textarea::-webkit-scrollbar-thumb {
     padding: 0.5rem 0.75rem; 
     transition: all 0.2s ease-in-out; 
 }
-
 .form-input:focus { 
     outline: none; 
     border-color: var(--m3-primary); 
     box-shadow: 0 0 0 2px var(--m3-primary-container); 
 }
 
-/* Remove number input arrows */
 input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none; 
     margin: 0; 
 }
-
 input[type=number] { 
     -moz-appearance: textfield; 
 }
 
-/* Styling for completed exercises */
 .exercise-completed {
     opacity: 0.65;
     border-left: 4px solid var(--m3-primary);
