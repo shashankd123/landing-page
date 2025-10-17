@@ -277,28 +277,51 @@ function updateHistoryOnPlanChange(oldPlan, newPlan) {
 
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Load initial data ---
     loadHistory();
     loadPlan();
+    
+    // --- Set initial day ---
     const today = new Date().getDay();
     currentDayIndex = (today === 0) ? 6 : today - 1;
+    
+    // --- Render the initial view ---
     renderWorkoutPlan();
 
+    // --- Attach all event listeners ---
+    editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
+    
+    closeModalBtn.addEventListener('click', () => { 
+        feedbackMessageContainer.textContent = ''; 
+        closeModal(modal, modalContent); 
+    });
 
-editPlanBtn.addEventListener('click', () => openModal(modal, modalContent));
-closeModalBtn.addEventListener('click', () => { feedbackMessageContainer.textContent = ''; closeModal(modal, modalContent); });
-loadWorkoutBtn.addEventListener('click', () => {
-    feedbackMessageContainer.textContent = '';
-    let oldPlan, newPlan;
-    try { oldPlan = JSON.parse(localStorage.getItem('workoutPlan') || JSON.stringify(defaultWorkoutJSON)); } catch (e) { oldPlan = defaultWorkoutJSON; }
-    try { newPlan = JSON.parse(jsonInput.value); } catch(e) { feedbackMessageContainer.textContent = 'Invalid JSON. Please fix before saving.'; feedbackMessageContainer.classList.add('text-red-400'); return; }
-    updateHistoryOnPlanChange(oldPlan, newPlan);
-    savePlan();
-    saveHistory();
-    renderWorkoutPlan();
-    closeModal(modal, modalContent);
-});
-prevBtn.addEventListener('click', showPrevDay);
-nextBtn.addEventListener('click', showNextDay);
-aiGenerateBtn.addEventListener('click', generateAndCopyPrompt);
-closeHistoryModalBtn.addEventListener('click', () => closeModal(historyModal, historyModalContent));
+    loadWorkoutBtn.addEventListener('click', () => {
+        feedbackMessageContainer.textContent = '';
+        let oldPlan, newPlan;
+        try { 
+            oldPlan = JSON.parse(localStorage.getItem('workoutPlan') || JSON.stringify(defaultWorkoutJSON)); 
+        } catch (e) { 
+            oldPlan = defaultWorkoutJSON; 
+        }
+        
+        try { 
+            newPlan = JSON.parse(jsonInput.value); 
+        } catch(e) { 
+            feedbackMessageContainer.textContent = 'Invalid JSON. Please fix before saving.'; 
+            feedbackMessageContainer.classList.add('text-red-400'); 
+            return; 
+        }
+        
+        updateHistoryOnPlanChange(oldPlan, newPlan);
+        savePlan();
+        saveHistory();
+        renderWorkoutPlan();
+        closeModal(modal, modalContent);
+    });
+
+    prevBtn.addEventListener('click', showPrevDay);
+    nextBtn.addEventListener('click', showNextDay);
+    aiGenerateBtn.addEventListener('click', generateAndCopyPrompt);
+    closeHistoryModalBtn.addEventListener('click', () => closeModal(historyModal, historyModalContent));
 });
