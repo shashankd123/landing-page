@@ -16,15 +16,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <script src="script.js" defer></script>
 </head>
 <body class="antialiased">
 
 <div id="app-container" class="flex flex-col h-full">
-    <header class="relative flex justify-center items-center p-3">
-        <div class="text-center">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-[var(--m3-primary)]">Workout Planner</h1>
+    <header class="p-3 bg-[var(--m3-surface-variant)]/80 backdrop-blur-md border-b border-[var(--m3-outline)] sticky top-0 z-40">
+        <div class="max-w-xl mx-auto flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-[var(--m3-primary)] flex-shrink-0" style="font-size: 36px;">
+                    exercise
+                </span>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">Workout Planner</h1>
+                    <p class="text-sm text-[var(--m3-on-surface-variant)] -mt-1">Track your progress</p>
+                </div>
+            </div>
+            <div id="dynamic-header-content" class="pt-2"></div>
         </div>
     </header>
 
@@ -71,22 +82,21 @@
                         <div><label for="time_available" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Time per session (mins)</label><input type="number" id="time_available" value="60" min="15" max="180" class="form-input w-full"></div>
                     </div>
                     <div class="sm:col-span-2"><label for="requests" class="block text-sm font-medium text-[var(--m3-on-surface-variant)] mb-1">Special Requests</label><input type="text" id="requests" placeholder="e.g., focus on legs, no jumping" class="form-input w-full"></div>
-                    <div class="sm:col-span-2"><button id="ai-generate-btn" class="w-full bg-[var(--m3-primary)] hover:opacity-90 text-[var(--m3-on-primary)] font-bold py-2.5 px-4 rounded-full transition-opacity flex items-center justify-center gap-2">Create Prompt & Open Gemini</button></div>
+                    <div class="sm:col-span-2"><button id="ai-generate-btn" class="w-full bg-[var(--m3-primary-container)]/50 backdrop-blur-md border border-[var(--m3-primary)] hover:bg-[var(--m3-primary-container)]/80 text-[var(--m3-on-primary-container)] font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 whitespace-nowrap">Create Prompt & Open Gemini</button></div>
                 </div>
             </div>
             <div class="w-full md:w-1/2 flex flex-col">
                 <h3 class="text-xl font-bold mb-4">Paste AI Response Here</h3>
-                <textarea id="json-input" class="w-full flex-grow bg-[var(--m3-surface)] border border-[var(--m3-outline)] rounded-2xl p-3 text-[var(--m3-on-surface-variant)] text-xs font-mono focus:ring-2 focus:ring-[var(--m3-primary)] focus:border-[var(--m3-primary)] transition duration-200 resize-none" spellcheck="false" placeholder="After generating the plan in Gemini, copy the JSON response and paste it here."></textarea>
+                <textarea id="json-input" class="w-full flex-grow bg-[var(--m3-surface)] border border-[var(--m3-outline)] rounded-2xl p-3 text-[var(--m3-on-surface-variant)] text-xs font-mono focus:ring-2 focus:ring-[var(--m3-primary)] focus:border-[var(--m3-primary)] transition duration-200 resize-none h-80 md:h-auto" spellcheck="false" placeholder="After generating the plan in Gemini, copy the JSON response and paste it here."></textarea>
             </div>
         </div>
         <div id="feedback-message" class="mt-4 text-green-400 text-sm font-medium text-center min-h-[20px]"></div>
-        <div class="flex justify-end gap-4 mt-4">
-            <button id="close-modal-btn" class="bg-[var(--m3-secondary-container)] hover:bg-opacity-80 text-[var(--m3-on-secondary-container)] font-bold py-2 px-6 rounded-full transition-colors">Cancel</button>
-            <button id="load-workout-btn" class="bg-[var(--m3-primary)] hover:opacity-90 text-[var(--m3-on-primary)] font-bold py-2 px-6 rounded-full transition-colors">Save & Use Plan</button>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+            <button id="close-modal-btn" class="bg-[var(--m3-secondary-container)]/50 backdrop-blur-md border border-[var(--m3-outline)] hover:bg-[var(--m3-secondary-container)]/80 text-[var(--m3-on-secondary-container)] font-bold py-2 px-6 rounded-full transition-all">Cancel</button>
+            <button id="load-workout-btn" class="bg-[var(--m3-primary-container)]/50 backdrop-blur-md border border-[var(--m3-primary)] hover:bg-[var(--m3-primary-container)]/80 text-[var(--m3-on-primary-container)] font-bold py-2 px-6 rounded-full transition-all whitespace-nowrap">Save</button>
         </div>
     </div>
 </div>
-
 <div id="history-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex justify-center p-4 hidden z-50 overflow-y-auto">
     <div class="bg-[var(--m3-surface-variant)] p-6 rounded-3xl shadow-lg w-full max-w-2xl relative transform transition-all duration-300 scale-95 opacity-0 my-auto" id="history-modal-content">
          <div class="flex justify-between items-center mb-4">
