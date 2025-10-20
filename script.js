@@ -4,6 +4,7 @@ const debounce = (func, delay) => { let timeout; return (...args) => { clearTime
 // --- DOM element references ---
 const jsonInput = document.getElementById('json-input');
 const workoutContainer = document.getElementById('workout-container');
+const dynamicHeaderContent = document.getElementById('dynamic-header-content'); // <-- ADDED: Reference to new header
 const footerDayIndicator = document.getElementById('footer-day-indicator');
 const prevBtn = document.getElementById('prev-day-btn');
 const nextBtn = document.getElementById('next-day-btn');
@@ -49,26 +50,77 @@ function generateAndCopyPrompt() {
 }
 
 // --- UI Rendering & Logic ---
+
+// NEW FUNCTION: Updates the static header content
+function updateHeader() {
+    let workoutData;
+    try { workoutData = JSON.parse(jsonInput.value); } catch (error) { workoutData = defaultWorkoutJSON; }
+
+    const dayName = weekOrder[currentDayIndex];
+    const dayData = workoutData[dayName];
+    const todayStr = getTodayDateString();
+    const todaysProgress = workoutHistory[todayStr] || {};
+
+    if (!dayData || !dayData.exercises) {
+        dynamicHeaderContent.innerHTML = ''; // Clear header if no data
+        return;
+    }
+
+    const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
+    const totalExercises = dayData.exercises.length;
+    let completedExercises = 0;
+
+    dayData.exercises.forEach(ex => {
+        if (todaysProgress[ex.name]?.done) completedExercises++;
+    });
+
+    const progressPercentage = totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0;
+            
+    let progressSectionHtml = '';
+    if (!isRestDay) {
+        progressSectionHtml = `
+        <div class="progress-section">
+            <div class="flex justify-between items-center text-sm font-medium">
+                <h4 class="text-[var(--m3-on-surface-variant)]">Today's Progress</h4>
+                <span class="progress-percentage font-bold text-[var(--m3-primary)]">${progressPercentage}%</span>
+            </div>
+            <div class="w-full bg-[var(--m3-surface-variant)] rounded-full h-2 mt-1">
+                <div class="progress-bar-fill bg-[var(--m3-primary)] h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+            </div>
+        </div>`;
+    }
+
+    const dayHeadingHtml = `
+    <div class="day-heading mt-4">
+        <h3 class="text-l font-bold">${dayData.workout}</h3> 
+        ${!isRestDay ? `<p class="day-stats text-sm text-[var(--m3-on-surface-variant)]">${totalExercises} Exercises · <span class="completed-count">${completedExercises}</span> Complete</p>` : ''}
+    </div>`;
+
+    dynamicHeaderContent.innerHTML = `
+        ${progressSectionHtml}
+        ${dayHeadingHtml}
+    `;
+}
+
+// REFACTORED FUNCTION: Now only renders the exercise list for each day
 function renderWorkoutPlan() {
     workoutContainer.innerHTML = '';
     let workoutData;
     try { workoutData = JSON.parse(jsonInput.value); } catch (error) { workoutData = defaultWorkoutJSON; }
     const todayStr = getTodayDateString();
     const todaysProgress = workoutHistory[todayStr] || {};
-
     const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
     const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
 
     weekOrder.forEach((day, index) => {
-        const dayData = workoutData[day];
         const dayContainer = document.createElement('div');
         dayContainer.className = "day-page w-full h-full p-3 sm:p-4";
         dayContainer.dataset.dayIndex = index;
+        
+        const dayData = workoutData[day];
 
         if (dayData && dayData.exercises) {
-            const isRestDay = dayData.workout.toLowerCase().includes('rest') || dayData.exercises.length === 0;
-            const tagColor = isRestDay ? 'bg-[#3e4659] text-[#c8d9f0]' : 'bg-[#004885] text-[#d3e4ff]';
-            let exercisesHtml = '<ul class="space-y-2 flex-grow">';
+            let exercisesHtml = '<ul class="space-y-2 max-w-xl mx-auto">';
             if (dayData.exercises.length > 0) {
                 dayData.exercises.forEach((ex) => {
                     const progress = todaysProgress[ex.name] || {};
@@ -109,14 +161,25 @@ function renderWorkoutPlan() {
                 });
             } else { exercisesHtml += `<li class="text-center text-[var(--m3-on-surface-variant)] p-4">Enjoy your rest!</li>`; }
             exercisesHtml += '</ul>';
-            exercisesHtml += '<div class="h-32"></div>'; 
 
-            dayContainer.innerHTML = `<div class="max-w-xl mx-auto"><div class="flex justify-center items-center mb-3"><h3 class="text-lg font-bold">${dayData.workout}</h3></div>${exercisesHtml}</div>`;
+            // *** FIX IS HERE ***
+            // Add an invisible spacer div at the end of the content.
+            // This forces the scroll area to have extra space at the bottom.
+            exercisesHtml += '<div style="height: 140px;"></div>';
+            
+            dayContainer.innerHTML = exercisesHtml;
+
         } else { dayContainer.innerHTML = `<div class="text-center text-gray-500 pt-20">No workout scheduled for ${day}.</div>`; }
         workoutContainer.appendChild(dayContainer);
     });
     addExerciseListeners();
     updateDayView();
+}
+
+
+// REFACTORED FUNCTION: Now simply calls updateHeader
+function updateProgressDisplay() {
+    updateHeader();
 }
 
 const handleWeightInput = debounce((inputElement) => {
@@ -142,6 +205,7 @@ const handleWeightInput = debounce((inputElement) => {
         listItem.classList.remove('exercise-completed');
         completeBtn.innerHTML = checkIconNotDone;
     }
+    updateProgressDisplay();
 }, 800);
 
 function addExerciseListeners() {
@@ -164,12 +228,15 @@ function addExerciseListeners() {
 
             const checkIconDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-primary)]"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
             const checkIconNotDone = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-[var(--m3-on-surface-variant)]"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
-            listItem.classList.toggle('exercise-completed');
+            listItem.classList.toggle('exercise-completed', !isCurrentlyDone);
             btn.innerHTML = !isCurrentlyDone ? checkIconDone : checkIconNotDone;
+            
+            updateProgressDisplay();
         });
     });
 }
 
+// UPDATED FUNCTION: Now calls updateHeader
 function updateDayView() { 
     document.querySelectorAll('.day-page').forEach(page => {
         if (parseInt(page.dataset.dayIndex) === currentDayIndex) {
@@ -179,12 +246,16 @@ function updateDayView() {
         }
     });
     
+    updateHeader(); // <-- ADDED: Update the header whenever the day changes
+
     footerDayIndicator.textContent = weekOrder[currentDayIndex];
     prevBtn.disabled = currentDayIndex === 0; 
     nextBtn.disabled = currentDayIndex === weekOrder.length - 1; 
     prevBtn.classList.toggle('opacity-50', currentDayIndex === 0); 
     nextBtn.classList.toggle('opacity-50', currentDayIndex === weekOrder.length - 1); 
 }
+
+// --- Functions below this line are mostly unchanged ---
 
 function showNextDay() { if (currentDayIndex < weekOrder.length - 1) { currentDayIndex++; updateDayView(); } }
 function showPrevDay() { if (currentDayIndex > 0) { currentDayIndex--; updateDayView(); } }
